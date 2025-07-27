@@ -19,7 +19,7 @@ const userSchema = new Schema({
     profilePicture: {type: String, default: 'default.jpg'},
     resetToken: {type: String, default: null},
     resetTokenExpiration: {type: Date, default: null},
-    isAdmin: {type: Boolean, default: false},
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
     isActive: {type: Boolean, default: false},
     lastLogin: {type: Date, default: null},
     createdAt: {type: Date, default: Date.now}

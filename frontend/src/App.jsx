@@ -4,15 +4,14 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import Dashboard from "./pages/host/Dashboard";
-import Account from "./pages/host/Account";
-import Sessions from "./pages/host/Sessions";
+import Logout from "./components/logout";
 
-import CreateQuestion from "./components/CreateQuestion";
-import CreateSession from "./components/CreateSession";
+import UserDashboard from './routes/userDashboard';
 
 import PublicLayout from "./layouts/PublicLayout";
 import HostLayout from "./layouts/HostLayout";
+
+import ProtectedRoute from "./components/protectedRoutes";
 
 function App() {
   return (
@@ -22,17 +21,17 @@ function App() {
         element={<PublicLayout />}
       >
         <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Register />} />
+        <Route path="/signin" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
       </Route>
 
       {/* Host routes without Navbar/Footer */}
       <Route element={<HostLayout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/account" element={<Account />} />
-        <Route path="/session" element={<CreateSession />} />
-        <Route path="/question" element={<CreateQuestion />} />
-        <Route path="/sessions" element={<Sessions />} />
+        <Route 
+          path="/user-dashboard/*" 
+          element={<ProtectedRoute allowedRoles={['user']}><UserDashboard /></ProtectedRoute>} 
+        />
       </Route>
     </Routes>
   );

@@ -17,12 +17,12 @@ export default function Navbar() {
 
           {/* Desktop buttons */}
           <div className="hidden md:flex gap-8">
-            <Link to="/login">
+            <Link to="/signin">
               <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition">
                 Sign In
               </button>
             </Link>
-            <Link to="/register">
+            <Link to="/signup">
               <button className="bg-white hover:bg-gray-100 text-blue-600 px-4 py-2 rounded-lg font-semibold transition border border-blue-600">
                 Sign Up
               </button>
