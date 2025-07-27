@@ -7,15 +7,17 @@ const { sendVerificationEmail } = require('../utils/emailSender.js');
 
 exports.createUser = async (req, res) => {
   const { firstName, lastName, email, username, password } = req.body;
-
+  console.log(req.body);
   try {
     const isUsernameExist = await User.findOne({ username });
     if (isUsernameExist) {
+      console.log(isUsernameExist);
       return res.status(403).json({ message: "Username already taken" });
     }
 
     const isEmailExist = await User.findOne({ email });
     if (isEmailExist) {
+      console.log(isEmailExist);
       return res.status(403).json({ message: "This email already registered" });
     }
 
@@ -41,6 +43,7 @@ exports.createUser = async (req, res) => {
     await sendVerificationEmail(newUser.email, verificationToken);
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error: "Error in user registration",
       details: error.message,
@@ -89,8 +92,9 @@ exports.authentication = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
+  console.log(req.body);
   const { username, password } = req.body;
-
+  
   try {
     const registeredUser = await User.findOne({ username });
     if (!registeredUser) {

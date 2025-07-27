@@ -7,7 +7,7 @@ export default function PublicLayout() {
   return (
     <>
       <Navbar />
-      <main>
+      <main className="pt-20">
         <Outlet />
       </main>
       <Footer />

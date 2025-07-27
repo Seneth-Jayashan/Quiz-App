@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import api from "../api/axios";
 
 export default function Login() {
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -13,11 +14,24 @@ export default function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Replace with your authentication logic / API call
-    alert(`Logging in with: ${formData.email}`);
-  };
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+
+      const data = new FormData();
+      data.append("username", formData.username);
+      data.append("password", formData.password);
+
+      try {
+        const response = await api.post("/user/login", data, {
+          headers: { "Content-Type": "application/json" },
+        });
+        alert("Registration successful!");
+        console.log(response.data);
+      } catch (err) {
+        console.error(err);
+        alert("Registration failed. Please try again.");
+      }
+    };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -25,11 +39,11 @@ export default function Login() {
         <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-700 mb-1">Email</label>
+            <label className="block text-gray-700 mb-1">Username</label>
             <input
-              type="email"
-              name="email"
-              value={formData.email}
+              type="text"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
