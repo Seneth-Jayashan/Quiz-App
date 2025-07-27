@@ -14,6 +14,8 @@ export default function Register() {
     });
   };
 
+  const API_URL = process.env.API_URL;
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Replace this with API call or state handling
