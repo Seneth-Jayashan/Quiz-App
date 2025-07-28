@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import CreateSession from "../../components/CreateSession";
 import Swal from "sweetalert2";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Sessions() {
   const [sessions, setSessions] = useState([]);
@@ -35,7 +36,6 @@ export default function Sessions() {
   };
 
   const handleDelete = async (id) => {
-    // Confirmation popup
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "Do you really want to delete this session?",
@@ -47,11 +47,10 @@ export default function Sessions() {
     });
 
     if (result.isConfirmed) {
-
       try {
-        await api.delete(`/session/`,  {
+        await api.delete(`/session/`, {
           headers: { Authorization: `Bearer ${token}` },
-          data: {id},
+          data: { id },
         });
 
         Swal.fire({
@@ -62,7 +61,6 @@ export default function Sessions() {
           showConfirmButton: false,
         });
 
-        // Remove deleted session from state
         setSessions((prev) => prev.filter((s) => s._id !== id));
       } catch (err) {
         console.error("Failed to delete session", err);
@@ -75,44 +73,68 @@ export default function Sessions() {
     }
   };
 
-  if (loading) return <p>Loading ongoing sessions...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+  if (loading)
+    return <p className="text-center text-gray-500 mt-10">Loading ongoing sessions...</p>;
+  if (error)
+    return <p className="text-center text-red-600 mt-10">{error}</p>;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Ongoing Sessions</h2>
+    <div className="p-6 max-w-3xl mx-auto py-20">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-gray-800">Ongoing Sessions</h2>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
         >
           + Create New Session
         </button>
       </div>
 
       {sessions.length === 0 ? (
-        <p>No ongoing sessions found.</p>
+        <p className="text-center text-gray-600">No ongoing sessions found.</p>
       ) : (
-        <ul className="divide-y border rounded-md">
-          {sessions.map((session) => (
-            <li key={session._id} className="p-4 flex justify-between items-center">
-              <div>
-                <h3 className="text-lg font-semibold">
-                  {session.title || "Untitled Session"}
-                </h3>
-                <h3>{session.code}</h3>
-                <p>Created: {new Date(session.createdAt).toLocaleString()}</p>
-                <p>Status: {session.active ? "Active" : "Deactive"}</p>
-              </div>
-              <button
-                onClick={() => handleDelete(session._id)}
-                className="ml-4 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+        <motion.ul
+          className="space-y-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <AnimatePresence>
+            {sessions.map((session) => (
+              <motion.li
+                key={session._id}
+                className="bg-white rounded-lg shadow-md p-6 flex justify-between items-center"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                layout
               >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    {session.title || "Untitled Session"}
+                  </h3>
+                  <p className="text-gray-600 font-mono mt-1">{session.code}</p>
+                  <p className="text-gray-500 mt-1 text-sm">
+                    Created: {new Date(session.createdAt).toLocaleString()}
+                  </p>
+                  <p
+                    className={`mt-2 font-semibold ${
+                      session.active ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    Status: {session.active ? "Active" : "Inactive"}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleDelete(session._id)}
+                  className="ml-6 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+                >
+                  Delete
+                </button>
+              </motion.li>
+            ))}
+          </AnimatePresence>
+        </motion.ul>
       )}
 
       {showCreateModal && (

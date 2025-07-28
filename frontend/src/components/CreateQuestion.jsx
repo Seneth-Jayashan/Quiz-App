@@ -45,8 +45,8 @@ export default function CreateQuestion({ onClose, onCreated }) {
         ]);
         setCorrectAnswer(1);
 
-        if (onCreated) onCreated(); // refresh questions list
-        if (onClose) onClose();     // close modal
+        if (onCreated) onCreated();
+        if (onClose) onClose();
       } else {
         setMessage("Failed to create question");
       }
@@ -57,7 +57,7 @@ export default function CreateQuestion({ onClose, onCreated }) {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100">
+    <div className="flex justify-center items-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-lg"

@@ -28,8 +28,7 @@ export default function UserDashboard() {
       )}
 
       <div className="flex-1 flex flex-col">
-        {/* Top bar */}
-        <header className="bg-white shadow p-4 flex justify-between items-center">
+        <header className="bg-white shadow p-4 flex justify-between items-center fixed top-0 w-full">
           <button
             className="text-gray-600 hover:text-gray-800"
             onClick={toggleSidebar}
@@ -42,7 +41,7 @@ export default function UserDashboard() {
         {/* Routes */}
         <main className="p-6 flex-1">
           <Routes>
-            <Route path="/dashborad" element={<Dashboard />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/account" element={<Account />} />
             <Route path="/questions" element={<Questions />} />
             <Route path="/result/:sessionCode" element={<Result />} />

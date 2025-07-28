@@ -72,31 +72,27 @@ export default function Result() {
   if (!session) return <p>No session data.</p>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto py-20">
       <h1 className="text-3xl font-bold mb-6">Results for: {session.title}</h1>
 
       {questionsResponses.length === 0 && <p>No responses available.</p>}
 
       {questionsResponses.map((item, idx) => {
         const results = item.results || {};
-        const answerCount = Array.isArray(results.answerCount)
-          ? results.answerCount
-          : [];
+        const answerCount = Array.isArray(results.answerCount) ? results.answerCount : [];
+
+        const questionText = `Question ${idx + 1}`;  // <-- simple fallback title
 
         if (answerCount.length === 0) {
           return (
             <div key={idx} className="mb-10">
-              <h2 className="text-xl font-semibold mb-2">
-                Question {idx + 1}
-              </h2>
+              <h2 className="text-xl font-semibold mb-2">{questionText}</h2>
               <p>No responses for this question yet.</p>
             </div>
           );
         }
 
-        const labels = answerCount.map(
-          (opt) => `Option ${opt.optionNumber}`
-        );
+        const labels = answerCount.map((opt) => `Option ${opt.optionNumber}`);
         const counts = answerCount.map((opt) => opt.count);
 
         const chartData = {
@@ -105,19 +101,19 @@ export default function Result() {
             {
               label: `Responses for Question ${idx + 1}`,
               data: counts,
-              backgroundColor: "rgba(37, 99, 235, 0.6)",
+              backgroundColor: "rgba(37, 99, 235, 0.7)",
+              borderColor: "rgba(37, 99, 235, 1)",
+              borderWidth: 1,
             },
           ],
         };
 
         return (
           <div key={idx} className="mb-10">
-            <h2 className="text-xl font-semibold mb-2">
-              Question {idx + 1}
-            </h2>
+            <h2 className="text-xl font-semibold mb-2">{questionText}</h2>
             <Bar data={chartData} />
             <p className="mt-2 text-gray-600">
-              Correct answers submitted: {results.correctCount}
+              Correct answers submitted: {results.correctCount || 0}
             </p>
           </div>
         );

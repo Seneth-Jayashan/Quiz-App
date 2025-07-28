@@ -3,6 +3,8 @@ import api from "../../api/axios";
 import CreateQuestion from "../../components/CreateQuestion";
 import UpdateQuestion from "../../components/updateQuestion";
 
+import { motion, AnimatePresence } from "framer-motion";
+
 export default function Questions() {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,18 +13,13 @@ export default function Questions() {
   const token = localStorage.getItem("token");
 
   const fetchQuestions = async () => {
-    console.log('hiii');
     try {
-      console.log('hiii');
       const response = await api.get("/question/my", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('hiii');
       setQuestions(response.data.questions || []);
     } catch (err) {
       console.error("Error fetching questions:", err);
-            console.log('hiii');
-
     } finally {
       setLoading(false);
     }
@@ -52,7 +49,7 @@ export default function Questions() {
   };
 
   const openAddModal = () => {
-    setEditQuestion(null); // clear edit question to add new
+    setEditQuestion(null);
     setShowModal(true);
   };
 
@@ -61,41 +58,55 @@ export default function Questions() {
     setEditQuestion(null);
   };
 
-  // Callback after creating or updating a question
   const refreshAndClose = () => {
     fetchQuestions();
     closeModal();
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">My Questions</h2>
-        <button
+    <div className="p-6 max-w-4xl mx-auto py-20">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">My Questions</h2>
+        <motion.button
           onClick={openAddModal}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          className="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Add new question"
         >
           + Add Question
-        </button>
+        </motion.button>
       </div>
 
       {loading ? (
-        <div>Loading questions...</div>
+        <p className="text-center text-gray-600">Loading questions...</p>
       ) : questions.length === 0 ? (
-        <div>You have not created any questions yet.</div>
+        <p className="text-center text-gray-600">You have not created any questions yet.</p>
       ) : (
-        <div className="bg-white rounded-lg shadow p-4">
-          <ul className="divide-y">
+        <motion.div
+          className="space-y-6" // gap between cards
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          <AnimatePresence>
             {questions.map((q) => (
-              <li key={q._id} className="py-3">
-                <h3 className="font-semibold">{q.text}</h3>
-                <ul className="list-disc list-inside text-gray-600 mt-2 mb-1">
+              <motion.div
+                key={q._id}
+                className="bg-white rounded-lg shadow-md p-6"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                layout
+              >
+                <h3 className="font-semibold text-gray-800 text-lg mb-3">{q.text}</h3>
+                <ul className="list-disc list-inside text-gray-700 mb-4">
                   {q.options.map((opt, i) => (
                     <li
                       key={i}
                       className={
                         opt.optionNumber === q.correctAnswer
-                          ? "font-bold text-green-600"
+                          ? "font-semibold text-green-600"
                           : ""
                       }
                     >
@@ -104,52 +115,67 @@ export default function Questions() {
                     </li>
                   ))}
                 </ul>
-                <div className="flex gap-4 mt-2">
+                <div className="flex gap-6 text-sm">
                   <button
                     onClick={() => handleEdit(q)}
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-600 hover:underline focus:outline-none"
+                    aria-label={`Edit question: ${q.text}`}
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(q._id)}
-                    className="text-red-600 hover:underline"
+                    className="text-red-600 hover:underline focus:outline-none"
+                    aria-label={`Delete question: ${q.text}`}
                   >
                     Delete
                   </button>
                 </div>
-              </li>
+              </motion.div>
             ))}
-          </ul>
-        </div>
+          </AnimatePresence>
+        </motion.div>
       )}
 
       {/* Modal for Add or Edit */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-lg p-4">
-            <button
-              onClick={closeModal}
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="relative bg-white rounded-lg shadow-xl w-full max-w-lg p-6"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              role="dialog"
+              aria-modal="true"
             >
-              ✕
-            </button>
+              <button
+                onClick={closeModal}
+                className="absolute top-3 right-3 text-gray-600 hover:text-gray-800 focus:outline-none"
+                aria-label="Close modal"
+              >
+                ✕
+              </button>
 
-            {editQuestion ? (
-              <UpdateQuestion
-                question={editQuestion}
-                onClose={closeModal}
-                onUpdate={refreshAndClose}
-              />
-            ) : (
-              <CreateQuestion
-                onClose={closeModal}
-                onCreated={refreshAndClose}
-              />
-            )}
-          </div>
-        </div>
-      )}
+              {editQuestion ? (
+                <UpdateQuestion
+                  question={editQuestion}
+                  onClose={closeModal}
+                  onUpdate={refreshAndClose}
+                />
+              ) : (
+                <CreateQuestion onClose={closeModal} onCreated={refreshAndClose} />
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

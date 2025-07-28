@@ -4,7 +4,7 @@ import api from "../api/axios";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const links = [
-    { name: "Dashboard", to: "/user-dashboard/dashboard" },
+    { name: "Dashboard", to: "/user-dashboard/" },
     { name: "Sessions", to: "/user-dashboard/sessions" },
     { name: "Questions", to: "/user-dashboard/questions" },
     { name: "Results", to: "/user-dashboard/results" },
@@ -102,6 +102,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
             <li key={item.name}>
               <NavLink
                 to={item.to}
+                end={item.to === "/user-dashboard/"} // Add end only for Dashboard
                 className={({ isActive }) =>
                   `block px-4 py-2 rounded ${
                     isActive

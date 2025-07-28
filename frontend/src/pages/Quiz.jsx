@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-import { useLocation, useNavigate  } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import { motion, AnimatePresence } from "framer-motion";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -21,14 +23,11 @@ export default function Quiz() {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Note: We remove the error state variable and use toast directly
-
   useEffect(() => {
     const fetchSession = async () => {
       try {
         setLoading(true);
         const res = await api.get(`/session/code/${code}`);
-        console.log("Session API response:", res.data.session);
         setSession(res.data.session);
       } catch (err) {
         console.error(err);
@@ -53,8 +52,6 @@ export default function Quiz() {
       try {
         setLoading(true);
         const res = await api.get(`/question/${questionId}`);
-        console.log("Question API response:", res.data);
-
         const questionArray = res.data.question || res.data;
         const questionData = Array.isArray(questionArray) ? questionArray[0] : questionArray;
         setCurrentQuestion(questionData);
@@ -90,7 +87,7 @@ export default function Quiz() {
     } catch (error) {
       console.error(error);
       toast.error("Error saving response.");
-      return; // Stop if error
+      return;
     }
 
     if (currentIndex < session.questionId.length - 1) {
@@ -102,49 +99,70 @@ export default function Quiz() {
         text: "Thank you for completing the quiz.",
         confirmButtonText: "OK",
       }).then(() => {
-        navigate("/"); // Navigate to home page after user clicks OK
+        navigate("/");
       });
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (!session) return <p>No session found.</p>;
-  if (!currentQuestion || !currentQuestion.options) return <p>Loading question...</p>;
+  if (loading) return <p className="text-center mt-10 text-gray-600">Loading...</p>;
+  if (!session) return <p className="text-center mt-10 text-red-600">No session found.</p>;
+  if (!currentQuestion || !currentQuestion.options)
+    return <p className="text-center mt-10 text-gray-600">Loading question...</p>;
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div className="p-6 max-w-2xl mx-auto min-h-screen flex flex-col justify-center">
       <ToastContainer />
-      <h1 className="text-2xl font-bold mb-4">{session.title}</h1>
-      <div className="border p-4 rounded">
-        <p className="font-semibold mb-4">
-          Q{currentIndex + 1}. {currentQuestion.text}
-        </p>
-        <ul className="space-y-2">
-          {currentQuestion.options.map((opt) => (
-            <li
-              key={opt.optionNumber}
-              className={`border px-3 py-2 rounded cursor-pointer ${
-                selectedAnswer === opt.optionNumber
-                  ? "bg-blue-100 border-blue-500"
-                  : "hover:bg-gray-100"
-              }`}
-              onClick={() => handleAnswerClick(opt.optionNumber)}
-            >
-              {opt.optionNumber}. {opt.optionText}
-            </li>
-          ))}
-        </ul>
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">{session.title}</h1>
 
-        <div className="mt-4">
-          <button
-            onClick={handleNext}
-            disabled={selectedAnswer === null}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:bg-gray-400"
-          >
-            {currentIndex === session.questionId.length - 1 ? "Finish" : "Next"}
-          </button>
-        </div>
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          className="border p-6 rounded-xl shadow-md bg-white"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 0.4 }}
+        >
+          <p className="font-semibold mb-6 text-lg text-gray-900">
+            Q{currentIndex + 1}. {currentQuestion.text}
+          </p>
+          <ul className="space-y-3">
+            {currentQuestion.options.map((opt) => (
+              <li
+                key={opt.optionNumber}
+                className={`border rounded-lg px-4 py-3 cursor-pointer select-none text-gray-800 text-base transition
+                  ${
+                    selectedAnswer === opt.optionNumber
+                      ? "bg-blue-100 border-blue-500 font-semibold"
+                      : "hover:bg-gray-100 border-gray-300"
+                  }`}
+                onClick={() => handleAnswerClick(opt.optionNumber)}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleAnswerClick(opt.optionNumber);
+                }}
+                role="button"
+                aria-pressed={selectedAnswer === opt.optionNumber}
+              >
+                {opt.optionNumber}. {opt.optionText}
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8 text-right">
+            <motion.button
+              onClick={handleNext}
+              disabled={selectedAnswer === null}
+              className="bg-blue-600 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold shadow-md
+                         hover:bg-blue-700 disabled:cursor-not-allowed transition"
+              whileHover={selectedAnswer !== null ? { scale: 1.05 } : {}}
+              whileTap={selectedAnswer !== null ? { scale: 0.95 } : {}}
+            >
+              {currentIndex === session.questionId.length - 1 ? "Finish" : "Next"}
+            </motion.button>
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

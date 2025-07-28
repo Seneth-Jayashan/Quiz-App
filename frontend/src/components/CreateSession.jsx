@@ -22,7 +22,7 @@ export default function CreateSession({ onClose, onCreated }) {
   useEffect(() => {
     async function fetchQuestions() {
       try {
-        const res = await api.get("/question/questions/", {
+        const res = await api.get("/question/my/", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setQuestions(res.data.questions || []);

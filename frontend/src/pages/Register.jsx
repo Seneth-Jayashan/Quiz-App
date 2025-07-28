@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import api from "../api/axios";
-import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import { motion } from "framer-motion";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -27,92 +28,94 @@ export default function Register() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // Password confirmation
-  if (formData.password !== formData.repassword) {
-    Swal.fire({
-      title: "Passwords do not match!",
-      icon: "warning",
-      confirmButtonColor: "#d33"
-    });
-    return;
-  }
+    if (formData.password !== formData.repassword) {
+      Swal.fire({
+        title: "Passwords do not match!",
+        icon: "warning",
+        confirmButtonColor: "#d33",
+      });
+      return;
+    }
 
-  const data = new FormData();
-  data.append("firstName", formData.firstName);
-  data.append("lastName", formData.lastName);
-  data.append("email", formData.email);
-  data.append("username", formData.username);
-  data.append("password", formData.password);
-  if (profilePicture) {
-    data.append("profilePicture", profilePicture);
-  }
+    const data = new FormData();
+    data.append("firstName", formData.firstName);
+    data.append("lastName", formData.lastName);
+    data.append("email", formData.email);
+    data.append("username", formData.username);
+    data.append("password", formData.password);
+    if (profilePicture) data.append("profilePicture", profilePicture);
 
-  try {
-    const response = await api.post("/user/register", data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    try {
+      const response = await api.post("/user/register", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-    // Show toast notification
-    toast.success("Registration successful!", {
-      position: "top-right",
-      autoClose: 2000,
-    });
+      toast.success("Registration successful!", {
+        position: "top-right",
+        autoClose: 2000,
+      });
 
-    // SweetAlert popup
-    Swal.fire({
-      title: "Success!",
-      text: "Your account has been created.",
-      icon: "success",
-      timer: 2000,
-      showConfirmButton: false,
-    });
+      Swal.fire({
+        title: "Success!",
+        text: "Your account has been created.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
 
-    console.log(response.data);
-  } catch (err) {
-    console.error(err);
+      console.log(response.data);
+    } catch (err) {
+      console.error(err);
 
-    toast.error("Registration failed!", {
-      position: "bottom-right",
-      autoClose: 3000,
-    });
-
-   
-  }
-};
+      toast.error("Registration failed!", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    }
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-10">
-      <div className="w-full max-w-lg bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-20">
+      <motion.div
+        className="w-full md:max-w-3xl bg-white p-8 rounded-xl shadow-lg"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
           Create an Account
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* First & Last Name */}
-          <div className="flex flex-col gap-4 md:flex-row">
+          <div className="flex flex-col gap-6 md:flex-row">
             <div className="w-full md:w-1/2">
-              <label className="block text-gray-700 mb-1">First Name</label>
+              <label className="block text-gray-700 mb-2 font-medium">
+                First Name
+              </label>
               <input
                 type="text"
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
                 required
               />
             </div>
 
             <div className="w-full md:w-1/2">
-              <label className="block text-gray-700 mb-1">Last Name</label>
+              <label className="block text-gray-700 mb-2 font-medium">
+                Last Name
+              </label>
               <input
                 type="text"
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
                 required
               />
             </div>
@@ -120,64 +123,74 @@ export default function Register() {
 
           {/* Profile Picture */}
           <div>
-            <label className="block text-gray-700 mb-1">Profile Picture</label>
+            <label className="block text-gray-700 mb-2 font-medium">
+              Profile Picture
+            </label>
             <input
               type="file"
               name="profilePicture"
               onChange={handleFileChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
             />
           </div>
 
           {/* Email & Username */}
-          <div className="flex flex-col gap-4 md:flex-row">
+          <div className="flex flex-col gap-6 md:flex-row">
             <div className="w-full md:w-1/2">
-              <label className="block text-gray-700 mb-1">Email</label>
+              <label className="block text-gray-700 mb-2 font-medium">
+                Email
+              </label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
                 required
               />
             </div>
 
             <div className="w-full md:w-1/2">
-              <label className="block text-gray-700 mb-1">Username</label>
+              <label className="block text-gray-700 mb-2 font-medium">
+                Username
+              </label>
               <input
                 type="text"
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
                 required
               />
             </div>
           </div>
 
           {/* Password & Confirm Password */}
-          <div className="flex flex-col gap-4 md:flex-row">
+          <div className="flex flex-col gap-6 md:flex-row">
             <div className="w-full md:w-1/2">
-              <label className="block text-gray-700 mb-1">Password</label>
+              <label className="block text-gray-700 mb-2 font-medium">
+                Password
+              </label>
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
                 required
               />
             </div>
 
             <div className="w-full md:w-1/2">
-              <label className="block text-gray-700 mb-1">Re-enter Password</label>
+              <label className="block text-gray-700 mb-2 font-medium">
+                Re-enter Password
+              </label>
               <input
                 type="password"
                 name="repassword"
                 value={formData.repassword}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
                 required
               />
             </div>
@@ -186,19 +199,19 @@ export default function Register() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition transform active:scale-95"
           >
             Register
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-600 mt-4">
+        <p className="text-center text-sm text-gray-600 mt-6">
           Already have an account?{" "}
           <a href="/signin" className="text-blue-600 hover:underline">
             Login
           </a>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }
