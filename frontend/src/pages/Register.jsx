@@ -25,6 +25,11 @@ export default function Register() {
     });
   };
 
+    const handleClick = (e) => {
+      e.preventDefault();
+      navigate("/signin");
+    };
+
   const handleFileChange = (e) => {
     setProfilePicture(e.target.files[0]);
   };
@@ -210,7 +215,7 @@ export default function Register() {
 
         <p className="text-center text-sm text-gray-600 mt-6">
           Already have an account?{" "}
-          <a href="/signin" className="text-blue-600 hover:underline">
+          <a href="/signin" onClick={handleClick} className="text-blue-600 hover:underline">
             Login
           </a>
         </p>

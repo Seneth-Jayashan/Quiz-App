@@ -19,6 +19,11 @@ export default function Login() {
     });
   };
 
+    const handleClick = (e) => {
+      e.preventDefault();
+      navigate("/signup");
+    };
+    
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -130,7 +135,7 @@ export default function Login() {
 
         <p className="text-center text-sm text-gray-600 mt-6">
           Don’t have an account?{" "}
-          <a href="/signup" className="text-blue-600 hover:underline">
+          <a href="/signup" onClick={handleClick} className="text-blue-600 hover:underline">
             Register
           </a>
         </p>
