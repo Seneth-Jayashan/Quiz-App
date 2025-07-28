@@ -1,13 +1,14 @@
 import React, { useState } from "react";
+import api from "../api/axios";
 
-export default function CreateQuestion() {
+export default function CreateQuestion({ onClose, onCreated }) {
+  const token = localStorage.getItem("token");
   const [text, setText] = useState("");
   const [options, setOptions] = useState([
     { optionNumber: 1, optionText: "" },
     { optionNumber: 2, optionText: "" },
   ]);
   const [correctAnswer, setCorrectAnswer] = useState(1);
-  const [hostId, setHostId] = useState("");
   const [message, setMessage] = useState("");
 
   const handleOptionChange = (index, value) => {
@@ -25,16 +26,17 @@ export default function CreateQuestion() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newQuestion = { text, options, correctAnswer, hostId: Number(hostId) };
+    const newQuestion = { text, options, correctAnswer };
 
     try {
-      const res = await fetch("http://localhost:5000/api/questions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newQuestion),
+      const res = await api.post("/question", newQuestion, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (res.ok) {
+      if (res.status === 201 || res.status === 200) {
         setMessage("Question created successfully!");
         setText("");
         setOptions([
@@ -42,7 +44,9 @@ export default function CreateQuestion() {
           { optionNumber: 2, optionText: "" },
         ]);
         setCorrectAnswer(1);
-        setHostId("");
+
+        if (onCreated) onCreated(); // refresh questions list
+        if (onClose) onClose();     // close modal
       } else {
         setMessage("Failed to create question");
       }
@@ -67,17 +71,6 @@ export default function CreateQuestion() {
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            required
-            className="w-full border rounded-lg p-2"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Host ID</label>
-          <input
-            type="number"
-            value={hostId}
-            onChange={(e) => setHostId(e.target.value)}
             required
             className="w-full border rounded-lg p-2"
           />

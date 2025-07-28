@@ -71,8 +71,8 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.authentication = async (req, res) => {
-  const userId = req.user.id; // from JWT
-
+  const userId = req.user.id; 
+  console.log(req.user.id);
   try {
     const currentUser = await User.findOne({ userId }).select("-password");
     if (!currentUser) {
@@ -155,7 +155,7 @@ exports.verifyEmail = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { firstName, lastName, email } = req.body;
+    const { firstName, lastName, username } = req.body;
     const userId = req.user.id;
 
     const existingUser = await User.findOne({ userId });
@@ -170,7 +170,7 @@ exports.updateUser = async (req, res) => {
     const updateData = {
       firstName,
       lastName,
-      email,
+      username,
       profilePicture,
     };
 
