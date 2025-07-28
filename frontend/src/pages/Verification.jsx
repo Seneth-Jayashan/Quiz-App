@@ -1,29 +1,50 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import api from '../api/axios';
+import React, { useState } from "react";
+import Swal from "sweetalert2";
+import api from "../api/axios";
 
 export default function Verification() {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const response = await api.post('sendverifylink', { email });
-      setMessage(response.data.message);
+      const response = await api.post(
+        "/user/sendverifylink",
+        { email },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      Swal.fire({
+        title: "Verification Link Sent!",
+        text: response.data?.message || "Check your email inbox/spam folder.",
+        icon: "success",
+        confirmButtonColor: "#2563eb",
+      });
+      setEmail(""); 
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Something went wrong!');
+      Swal.fire({
+        title: "Error!",
+        text:
+          error.response?.data?.message ||
+          "Something went wrong while sending the verification link.",
+        icon: "error",
+        confirmButtonColor: "#dc2626",
+      });
     }
   };
 
   return (
-    <div>
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-4 bg-white shadow-md rounded-xl">
-        <h2 className="text-2xl font-bold text-gray-700 text-center">Send Verification Link</h2>
-        <p className="text-gray-600 text-center">Enter your email to re send verification link</p>
-        
-        {message && <p className="text-center text-green-500">{message}</p>}
+        <h2 className="text-2xl font-bold text-gray-700 text-center">
+          Send Verification Link
+        </h2>
+        <p className="text-gray-600 text-center">
+          Enter your email to resend the verification link
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -42,7 +63,6 @@ export default function Verification() {
           </button>
         </form>
       </div>
-    </div>
     </div>
   );
 }

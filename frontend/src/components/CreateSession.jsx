@@ -16,9 +16,9 @@ export default function CreateSession({ onClose, onCreated }) {
   const [selectedQuestionIds, setSelectedQuestionIds] = useState([]);
   const [sessionCode, setSessionCode] = useState(generateSessionCode());
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const token = localStorage.getItem("token");
 
-  // Fetch pre-created questions for user to select from
   useEffect(() => {
     async function fetchQuestions() {
       try {
@@ -34,15 +34,18 @@ export default function CreateSession({ onClose, onCreated }) {
   }, [token]);
 
   const toggleSelectQuestion = (id) => {
-    if (selectedQuestionIds.includes(id)) {
-      setSelectedQuestionIds(selectedQuestionIds.filter((qid) => qid !== id));
-    } else {
-      setSelectedQuestionIds([...selectedQuestionIds, id]);
-    }
+    setSelectedQuestionIds((prev) =>
+      prev.includes(id) ? prev.filter((qid) => qid !== id) : [...prev, id]
+    );
+  };
+
+  const regenerateCode = () => {
+    setSessionCode(generateSessionCode());
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
 
     if (!title.trim()) {
       setMessage("Session title is required.");
@@ -52,6 +55,8 @@ export default function CreateSession({ onClose, onCreated }) {
       setMessage("Select at least one question.");
       return;
     }
+
+    setIsSubmitting(true);
 
     try {
       const sessionData = {
@@ -67,7 +72,7 @@ export default function CreateSession({ onClose, onCreated }) {
         },
       });
 
-      if (res.status === 200) {
+      if (res.status === 200 || res.status === 201) {
         setMessage("Session created successfully!");
         if (onCreated) onCreated();
         if (onClose) onClose();
@@ -77,6 +82,8 @@ export default function CreateSession({ onClose, onCreated }) {
     } catch (error) {
       console.error(error.message);
       setMessage("Error creating session.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -89,12 +96,22 @@ export default function CreateSession({ onClose, onCreated }) {
         <h2 className="text-2xl font-bold mb-4 text-center">Create Session</h2>
 
         <label className="block mb-2 font-semibold">Session Code (Auto-generated)</label>
-        <input
-          type="text"
-          value={sessionCode}
-          readOnly
-          className="mb-4 w-full border rounded p-2 bg-gray-100 cursor-not-allowed"
-        />
+        <div className="flex items-center mb-4">
+          <input
+            type="text"
+            value={sessionCode}
+            readOnly
+            className="flex-grow border rounded p-2 bg-gray-100 cursor-not-allowed"
+          />
+          <button
+            type="button"
+            onClick={regenerateCode}
+            className="ml-2 px-3 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
+            title="Generate new code"
+          >
+            🔄
+          </button>
+        </div>
 
         <label className="block mb-2 font-semibold">Session Title</label>
         <input
@@ -136,15 +153,17 @@ export default function CreateSession({ onClose, onCreated }) {
           <button
             type="button"
             onClick={onClose}
+            disabled={isSubmitting}
             className="px-4 py-2 rounded border hover:bg-gray-100"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            disabled={isSubmitting}
+            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
           >
-            Create Session
+            {isSubmitting ? "Creating..." : "Create Session"}
           </button>
         </div>
       </form>

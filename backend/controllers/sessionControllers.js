@@ -59,12 +59,10 @@ exports.getSession = async (req, res) => {
   let { code } = req.params;
   code = code.trim();
 
-  console.log("Searching session with code:", code);
 
   try {
-    const sessionData = await Session.findOne({ hostId:6});
+    const sessionData = await Session.findOne({ code:code});
 
-    console.log("Found session:", sessionData);
 
     if (!sessionData) {
       return res.status(404).json({ message: "Invalid session code" });

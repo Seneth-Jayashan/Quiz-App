@@ -12,7 +12,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const res = await api.get(`/verify/${token}`);
+        const res = await api.get(`/user/verify/${token}`);
         const data = res.data;
 
         setMessage(data?.message || "Email verified successfully!");
@@ -30,14 +30,12 @@ const VerifyEmail = () => {
         setMessage("Invalid or expired token");
         Swal.fire({
           title: "Error!",
-          text: "Invalid or expired token. Please contact support.",
+          text: "Invalid or expired token. Re send Verification link or Please contact support.",
           icon: "error",
           confirmButtonColor: "#dc2626",
         });
 
-        setTimeout(() => {
-          window.location.href = "https://sjaywebsolutions.lk/contact";
-        }, 2000);
+        setTimeout(() => navigate("/verification"), 2000);
       } finally {
         setLoading(false);
       }

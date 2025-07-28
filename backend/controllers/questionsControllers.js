@@ -12,8 +12,8 @@ exports.createQuestion = async (req, res) => {
       text,
       hostId,
       options: options.map((opt, index) => ({
-        optionNumber: opt.optionNumber || index + 1,  // or just use the provided optionNumber
-        optionText: opt.optionText // <-- This is the string, not the whole object
+        optionNumber: opt.optionNumber || index + 1, 
+        optionText: opt.optionText 
       })),
       correctAnswer
     });
@@ -59,7 +59,6 @@ exports.getQuestion = async (req,res) => {
 exports.getAllQuestionsByHostId = async (req, res) => {
   try {
     const hostId = req.user.id;
-    console.log(hostId);
     const questions = await Question.find({ hostId });
     if (!questions || questions.length === 0) {
       return res.status(404).json({ message: "No questions found" });
@@ -74,7 +73,6 @@ exports.getAllQuestionsByHostId = async (req, res) => {
 exports.updateQuestion = async (req, res) => {
   try {
     const { questionId, text, options, correctAnswer } = req.body;
-    console.log('updatedQuestion:', JSON.stringify(req.body, null, 2));
 
     if (!questionId) {
       return res.status(400).json({ message: "Question ID is required" });

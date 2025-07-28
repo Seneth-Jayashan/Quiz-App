@@ -3,8 +3,10 @@ import api from "../api/axios";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -65,6 +67,8 @@ export default function Register() {
         icon: "success",
         timer: 2000,
         showConfirmButton: false,
+      }).then(() => {
+        navigate("/signin");
       });
 
       console.log(response.data);

@@ -59,14 +59,14 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-t border-gray-200">
           <div className="px-4 pt-4 pb-6 space-y-4">
             <Link
-              to="/login"
+              to="/signin"
               className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition"
               onClick={() => setMenuOpen(false)}
             >
               Sign In
             </Link>
             <Link
-              to="/register"
+              to="/signup"
               className="block w-full text-center bg-white hover:bg-gray-100 text-blue-600 px-4 py-2 rounded-lg font-semibold transition border border-blue-600"
               onClick={() => setMenuOpen(false)}
             >

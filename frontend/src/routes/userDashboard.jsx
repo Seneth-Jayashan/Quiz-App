@@ -35,7 +35,15 @@ export default function UserDashboard() {
           >
             ☰
           </button>
-          <h1 className="text-xl font-semibold">Welcome Back!</h1>
+          <button
+            aria-label="Logout"
+            onClick={() => { window.location.href = '/logout' }}
+            className="inline-flex items-center px-4 py-2 bg-red-600 text-white font-semibold rounded-md
+                      hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1
+                      transition-colors duration-200"
+          >
+            Logout
+          </button>
         </header>
 
         {/* Routes */}

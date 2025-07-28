@@ -32,9 +32,7 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
       });
 
-      console.log(response);
-
-      if (response?.data?.user?.status === false) {
+      if (response?.data?.status === false) {
         await Swal.fire({
           title: "Please verify your account...",
           text: "Check your email (inbox/spam) to verify your account.",

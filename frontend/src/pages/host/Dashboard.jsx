@@ -29,22 +29,26 @@ export default function Dashboard() {
         const sessionsRes = await api.get("/session/", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("Sessions response:", sessionsRes.data);
-        const sessionsData =
-          sessionsRes.data.sessions || sessionsRes.data.session || [];
+        const sessionsData = sessionsRes.data.sessions || sessionsRes.data.session || [];
         setSessions(Array.isArray(sessionsData) ? sessionsData : []);
 
         // Fetch questions count of logged user
-        const questionsRes = await api.get("/question/my", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("Questions response:", questionsRes.data);
-        const questionsData = questionsRes.data.questions || [];
-        setQuestionsCount(
-          Array.isArray(questionsData) ? questionsData.length : 0
-        );
+        try {
+          const questionsRes = await api.get("/question/my", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const questionsData = questionsRes.data.questions || [];
+          setQuestionsCount(Array.isArray(questionsData) ? questionsData.length : 0);
+        } catch (err) {
+          // If 404, no questions yet — set count to zero
+          if (err.response?.status === 404) {
+            setQuestionsCount(0);
+          } else {
+            throw err; // Other errors, throw to outer catch
+          }
+        }
       } catch (err) {
-        console.error(err);
+        console.error("Dashboard fetch error: ", err);
         setError("Failed to load dashboard data.");
       } finally {
         setLoading(false);
@@ -60,10 +64,7 @@ export default function Dashboard() {
 
   if (loading) return <p className="text-center p-6">Loading dashboard...</p>;
   if (error) return <p className="text-center p-6 text-red-600">{error}</p>;
-  if (!user)
-    return (
-      <p className="text-center p-6 text-red-600">User data not found.</p>
-    );
+  if (!user) return <p className="text-center p-6 text-red-600">User data not found.</p>;
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8 py-20">
@@ -79,9 +80,7 @@ export default function Dashboard() {
           className="w-20 h-20 rounded-full object-cover"
         />
         <div>
-          <h1 className="text-2xl font-bold">
-            {user.firstName} {user.lastName}
-          </h1>
+          <h1 className="text-2xl font-bold">{user.firstName} {user.lastName}</h1>
           <p className="text-gray-600">@{user.username}</p>
           <p className="text-gray-600">{user.email}</p>
           <p className={user.isActive ? "text-green-600" : "text-red-600"}>
@@ -114,9 +113,7 @@ export default function Dashboard() {
                 key={session._id}
                 className="flex justify-between items-center border p-4 rounded hover:bg-gray-50 cursor-pointer"
               >
-                <span className="font-semibold">
-                  {session.title || "Untitled Session"}
-                </span>
+                <span className="font-semibold">{session.title || "Untitled Session"}</span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();

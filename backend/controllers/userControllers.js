@@ -130,6 +130,7 @@ exports.login = async (req, res) => {
 exports.verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
+    console.log(req.params);
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
     const currentUser = await User.findOne({ userId: decoded.id }).select(
@@ -207,7 +208,7 @@ exports.sendVeriification = async (req, res) => {
     try{
         const email = req.body;
         const host = await User.findOne({ email });
-
+        console.log(email , host)
         if(!host){
             return res.status(404).json({message: 'User not found'});
         }
@@ -223,4 +224,4 @@ exports.sendVeriification = async (req, res) => {
     }catch(error){
         res.status(500).json({error: 'Failed to send verification link', details: error.message});
     }
-}
+};

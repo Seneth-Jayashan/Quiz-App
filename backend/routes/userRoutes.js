@@ -1,4 +1,6 @@
 const express = require('express');
+const router = express.Router();
+
 const {
   createUser,
   getAllUsers,
@@ -7,17 +9,18 @@ const {
   verifyEmail,
   updateUser,
   deleteUser,
-  sendVeriification
+  sendVeriification,
 } = require( "../controllers/userControllers.js");
 const { authMiddleware, adminMiddleware } = require( "../middleware/authMiddleware.js");
 
-const router = express.Router();
 const upload = require("../middleware/uploadMiddleware");
 
 router.post("/register", upload.single("profilePicture"), createUser);
 router.post("/login", login);
-router.get("/verify/:token", verifyEmail);
+
 router.post('/sendverifylink', sendVeriification);
+
+router.get("/verify/:token", verifyEmail);
 
 router.get("/me", authMiddleware, authentication);
 router.get("/", authMiddleware, adminMiddleware, getAllUsers);

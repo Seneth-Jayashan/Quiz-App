@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import CreateQuestion from "../../components/CreateQuestion";
 import UpdateQuestion from "../../components/updateQuestion";
+import { PencilIcon, TrashIcon } from "@heroicons/react/outline";
+
 
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -84,7 +86,7 @@ export default function Questions() {
         <p className="text-center text-gray-600">You have not created any questions yet.</p>
       ) : (
         <motion.div
-          className="space-y-6" // gap between cards
+          className="space-y-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
@@ -93,41 +95,53 @@ export default function Questions() {
             {questions.map((q) => (
               <motion.div
                 key={q._id}
-                className="bg-white rounded-lg shadow-md p-6"
+                className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 cursor-pointer
+                  hover:shadow-lg hover:bg-blue-50 transition-shadow transition-colors duration-300"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 layout
+                role="group"
+                tabIndex={0}
+                aria-label={`Question card: ${q.text}`}
               >
-                <h3 className="font-semibold text-gray-800 text-lg mb-3">{q.text}</h3>
-                <ul className="list-disc list-inside text-gray-700 mb-4">
+                <h3 className="font-semibold text-gray-900 text-lg mb-4">{q.text}</h3>
+                <ul className="list-disc list-inside text-gray-700 mb-6 space-y-1">
                   {q.options.map((opt, i) => (
                     <li
                       key={i}
                       className={
                         opt.optionNumber === q.correctAnswer
                           ? "font-semibold text-green-600"
-                          : ""
+                          : "text-gray-700"
                       }
                     >
                       {opt.optionText}
-                      {opt.optionNumber === q.correctAnswer && " (Correct)"}
+                      {opt.optionNumber === q.correctAnswer && (
+                        <span className="ml-2 inline-block bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full font-medium">
+                          Correct
+                        </span>
+                      )}
                     </li>
                   ))}
                 </ul>
-                <div className="flex gap-6 text-sm">
+                <div className="flex gap-4 text-sm">
                   <button
                     onClick={() => handleEdit(q)}
-                    className="text-blue-600 hover:underline focus:outline-none"
+                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-full px-3 py-1"
                     aria-label={`Edit question: ${q.text}`}
+                    type="button"
                   >
+                    <PencilIcon className="w-4 h-4" />
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(q._id)}
-                    className="text-red-600 hover:underline focus:outline-none"
+                    className="flex items-center gap-1 text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-400 rounded-full px-3 py-1"
                     aria-label={`Delete question: ${q.text}`}
+                    type="button"
                   >
+                    <TrashIcon className="w-4 h-4" />
                     Delete
                   </button>
                 </div>
