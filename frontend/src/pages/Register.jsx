@@ -71,7 +71,6 @@ export default function Register() {
         navigate("/signin");
       });
 
-      console.log(response.data);
     } catch (err) {
       console.error(err);
 

@@ -7,17 +7,14 @@ const { sendVerificationEmail } = require('../utils/emailSender.js');
 
 exports.createUser = async (req, res) => {
   const { firstName, lastName, email, username, password } = req.body;
-  console.log(req.body);
   try {
     const isUsernameExist = await User.findOne({ username });
     if (isUsernameExist) {
-      console.log(isUsernameExist);
       return res.status(403).json({ message: "Username already taken" });
     }
 
     const isEmailExist = await User.findOne({ email });
     if (isEmailExist) {
-      console.log(isEmailExist);
       return res.status(403).json({ message: "This email already registered" });
     }
 
@@ -91,7 +88,6 @@ exports.authentication = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  console.log(req.body);
   const { username, password } = req.body;
   
   try {
@@ -130,7 +126,6 @@ exports.login = async (req, res) => {
 exports.verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
-    console.log(req.params);
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
     const currentUser = await User.findOne({ userId: decoded.id }).select(

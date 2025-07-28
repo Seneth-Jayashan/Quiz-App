@@ -3,7 +3,6 @@ const Question = require('../models/questions');
 
 exports.createQuestion = async (req, res) => {
   const { text, options, correctAnswer } = req.body;
-  console.log(req.body);
 
   try {
     const hostId = req.user.id; 
