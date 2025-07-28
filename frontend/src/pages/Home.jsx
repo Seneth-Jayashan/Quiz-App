@@ -1,17 +1,23 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [code, setCode] = useState("");
+  const navigate = useNavigate();
 
   const handleJoin = () => {
-    // Replace this with navigation or backend call
-    alert(`Joining with code: ${code}`);
+    if (!code.trim()) {
+      alert("Please enter a session code");
+      return;
+    }
+
+    // Redirect to Quiz page with the code in the URL
+    navigate(`/quiz?code=${code}`);
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-900">
-      {/* Main Section */}
       <motion.main
         className="flex flex-col items-center justify-center flex-1 text-center p-6"
         initial={{ opacity: 0 }}

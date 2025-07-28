@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import api from "../api/axios";
+import { toast } from 'react-toastify';
+import Swal  from 'sweetalert2';
+import { useNavigate } from "react-router-dom";
+
 
 export default function Login() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -15,24 +20,57 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-      e.preventDefault();
+  e.preventDefault();
 
-      const data = new FormData();
-      data.append("username", formData.username);
-      data.append("password", formData.password);
+  const data = {
+    username: formData.username,
+    password: formData.password,
+  };
 
-      try {
-        const response = await api.post("/user/login", data, {
-          headers: { "Content-Type": "application/json" },
-        });
-        alert("Registration successful!");
-        console.log(response.data);
-        localStorage.setItem('token', response.data.token);
-      } catch (err) {
-        console.error(err);
-        alert("Registration failed. Please try again.");
-      }
-    };
+  try {
+    const response = await api.post("/user/login", data, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    // Show success toast
+    toast.success("Login successful!", {
+      position: "top-right",
+      autoClose: 2000,
+    });
+
+    // SweetAlert2 success popup
+    Swal.fire({
+      title: 'Welcome!',
+      text: `Hello ${formData.username}`,
+      icon: 'success',
+      confirmButtonColor: '#3085d6',
+      timer: 2000,
+      showConfirmButton: false
+    }).then(() => {
+      // Navigate to dashboard after popup closes
+      navigate("/user-dashboard");
+    });
+
+    localStorage.setItem('token', response.data.token);
+    nav
+  } catch (err) {
+    console.error(err);
+
+    // Error toast
+    toast.error("Login failed!", {
+      position: "top-right",
+      autoClose: 3000,
+    });
+
+    // SweetAlert2 error popup
+    Swal.fire({
+      title: 'Oops...',
+      text: 'Login failed. Please try again.',
+      icon: 'error',
+      confirmButtonColor: '#d33',
+    });
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 pt-20">

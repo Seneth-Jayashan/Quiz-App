@@ -7,17 +7,22 @@ export default function Questions() {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editQuestion, setEditQuestion] = useState(null); // null means add mode
+  const [editQuestion, setEditQuestion] = useState(null);
   const token = localStorage.getItem("token");
 
   const fetchQuestions = async () => {
+    console.log('hiii');
     try {
-      const response = await api.get("/question/questions/", {
+      console.log('hiii');
+      const response = await api.get("/question/my", {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log('hiii');
       setQuestions(response.data.questions || []);
     } catch (err) {
       console.error("Error fetching questions:", err);
+            console.log('hiii');
+
     } finally {
       setLoading(false);
     }

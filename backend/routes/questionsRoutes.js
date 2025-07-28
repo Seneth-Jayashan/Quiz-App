@@ -2,6 +2,7 @@ const express = require('express');
 const {
     createQuestion,
     getAllQuestionsById,
+    getQuestion,
     getAllQuestionsByHostId,
     updateQuestion,
     deleteQuestion
@@ -12,7 +13,8 @@ const router = express.Router();
 
 router.post('/', authMiddleware, createQuestion);
 router.get('/', getAllQuestionsById);
-router.get('/questions', authMiddleware, getAllQuestionsByHostId);
+router.get('/my', authMiddleware, getAllQuestionsByHostId);
+router.get('/:questionId', getQuestion);
 router.put('/', updateQuestion);
 router.delete('/', deleteQuestion);
 

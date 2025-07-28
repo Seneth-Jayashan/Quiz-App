@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const responseSchema = new Schema({
-    sessionCode: { type: Number, required: true, unique: true },
-    questionId: { type: mongoose.Schema.Types.ObjectId, ref: "Question"},
+    sessionCode: { type: Number, required: true, },
+    questionId: { type: String, required:true},
     answerCount: [{
         optionNumber: {type: Number,required: true},
         count: { type: Number, required: true }

@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Logout from "./components/logout";
+import Quiz from "./pages/Quiz";
 
 import UserDashboard from './routes/userDashboard';
 
@@ -21,6 +22,7 @@ function App() {
         element={<PublicLayout />}
       >
         <Route path="/" element={<Home />} />
+        <Route path="/quiz" element={<Quiz />} />
         <Route path="/signup" element={<Register />} />
         <Route path="/signin" element={<Login />} />
         <Route path="/logout" element={<Logout />} />

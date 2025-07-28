@@ -45,7 +45,7 @@ export default function UserDashboard() {
             <Route path="/dashborad" element={<Dashboard />} />
             <Route path="/account" element={<Account />} />
             <Route path="/questions" element={<Questions />} />
-            <Route path="/result" element={<Result />} />
+            <Route path="/result/:sessionCode" element={<Result />} />
             <Route path="/results" element={<Results />} />
             <Route path="/sessions" element={<Sessions />} />
           </Routes>

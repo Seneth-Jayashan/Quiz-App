@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import api from "../api/axios";
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -25,37 +27,62 @@ export default function Register() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Password confirmation
-    if (formData.password !== formData.repassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+  // Password confirmation
+  if (formData.password !== formData.repassword) {
+    Swal.fire({
+      title: "Passwords do not match!",
+      icon: "warning",
+      confirmButtonColor: "#d33"
+    });
+    return;
+  }
 
-    const data = new FormData();
-    data.append("firstName", formData.firstName);
-    data.append("lastName", formData.lastName);
-    data.append("email", formData.email);
-    data.append("username", formData.username);
-    data.append("password", formData.password);
-    if (profilePicture) {
-      data.append("profilePicture", profilePicture);
-    }
+  const data = new FormData();
+  data.append("firstName", formData.firstName);
+  data.append("lastName", formData.lastName);
+  data.append("email", formData.email);
+  data.append("username", formData.username);
+  data.append("password", formData.password);
+  if (profilePicture) {
+    data.append("profilePicture", profilePicture);
+  }
 
-    try {
-      const response = await api.post("/user/register", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      alert("Registration successful!");
-      console.log(response.data);
-    } catch (err) {
-      console.error(err);
-      alert("Registration failed. Please try again.");
-    }
-  };
+  try {
+    const response = await api.post("/user/register", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    // Show toast notification
+    toast.success("Registration successful!", {
+      position: "top-right",
+      autoClose: 2000,
+    });
+
+    // SweetAlert popup
+    Swal.fire({
+      title: "Success!",
+      text: "Your account has been created.",
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+
+    console.log(response.data);
+  } catch (err) {
+    console.error(err);
+
+    toast.error("Registration failed!", {
+      position: "bottom-right",
+      autoClose: 3000,
+    });
+
+   
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-10">

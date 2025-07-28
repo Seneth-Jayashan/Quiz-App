@@ -72,7 +72,6 @@ exports.getAllUsers = async (req, res) => {
 
 exports.authentication = async (req, res) => {
   const userId = req.user.id; 
-  console.log(req.user.id);
   try {
     const currentUser = await User.findOne({ userId }).select("-password");
     if (!currentUser) {

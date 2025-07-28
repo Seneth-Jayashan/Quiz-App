@@ -54,11 +54,17 @@ exports.getSessionsByHostId = async (req,res) => {
   }
 }
 
+
 exports.getSession = async (req, res) => {
-  const { code } = req.params;
+  let { code } = req.params;
+  code = code.trim();
+
+  console.log("Searching session with code:", code);
 
   try {
-    const sessionData = await Session.findOne({ code }).populate("questionId");
+    const sessionData = await Session.findOne({ hostId:6});
+
+    console.log("Found session:", sessionData);
 
     if (!sessionData) {
       return res.status(404).json({ message: "Invalid session code" });
@@ -69,12 +75,14 @@ exports.getSession = async (req, res) => {
       session: sessionData,
     });
   } catch (error) {
+    console.error("Error fetching session:", error);
     res.status(500).json({
       error: "Failed to fetch the session",
       details: error.message,
     });
   }
 };
+
 
 exports.updateSession = async (req, res) => {
   const { code } = req.params;
@@ -111,13 +119,12 @@ exports.updateSession = async (req, res) => {
 };
 
 exports.deleteSession = async (req, res) => {
-  const { code } = req.params;
-
+  const { id } = req.body;
   try {
-    const deletedSession = await Session.findOneAndDelete({ code });
+    const deletedSession = await Session.findOneAndDelete({ _id:id });
 
     if (!deletedSession) {
-      return res.status(404).json({ message: "Invalid session code" });
+      return res.status(404).json({ message: "Invalid id" });
     }
 
     res.status(200).json({ message: "Session deleted successfully" });

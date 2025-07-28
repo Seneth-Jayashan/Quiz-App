@@ -13,8 +13,8 @@ const router = express.Router();
 
 router.post('/', authMiddleware, createSession);
 router.get('/', authMiddleware, getSessionsByHostId);
-router.get('/:code', getSession);
+router.get('/code/:code', getSession);
 router.put('/:code', updateSession);
-router.delete('/:code', deleteSession);
+router.delete('/', deleteSession);
 
 module.exports = router;

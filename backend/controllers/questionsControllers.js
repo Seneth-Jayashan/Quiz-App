@@ -7,7 +7,6 @@ exports.createQuestion = async (req, res) => {
 
   try {
     const hostId = req.user.id; 
-  console.log(hostId);
 
     const newQuestion = new Question({
       text,
@@ -39,6 +38,21 @@ exports.getAllQuestionsById = async (req, res) => {
     res.status(200).json({ message: "Questions retrieved successfully", questions });
   } catch (error) {
     res.status(500).json({ error: "Failed to retrieve questions", details: error.message });
+  }
+};
+
+exports.getQuestion = async (req,res) => {
+   try {
+    const { questionId } = req.params;
+
+    const question = await Question.find({ _id:questionId  });
+    if (!question) {
+      return res.status(404).json({ message: "No questions found for these ID" });
+    }
+
+    res.status(200).json({ message: "Question retrieved successfully", question });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to retrieve question", details: error.message });
   }
 };
 
