@@ -9,7 +9,6 @@ export default function Footer() {
           Create your own Quiz at{" "}
           <a
             href="/signup"
-            target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:underline"
           >
