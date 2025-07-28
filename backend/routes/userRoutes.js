@@ -17,7 +17,7 @@ const upload = require("../middleware/uploadMiddleware");
 router.post("/register", upload.single("profilePicture"), createUser);
 router.post("/login", login);
 router.get("/verify/:token", verifyEmail);
-router.post('/sendverifylink', authMiddleware,sendVeriification);
+router.post('/sendverifylink', sendVeriification);
 
 router.get("/me", authMiddleware, authentication);
 router.get("/", authMiddleware, adminMiddleware, getAllUsers);

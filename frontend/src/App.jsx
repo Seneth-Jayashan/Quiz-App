@@ -6,6 +6,8 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Logout from "./components/logout";
 import Quiz from "./pages/Quiz";
+import VerifyEmail from "./components/verifyemail";
+import Verification from "./pages/Verification";
 
 import UserDashboard from './routes/userDashboard';
 
@@ -26,6 +28,8 @@ function App() {
         <Route path="/signup" element={<Register />} />
         <Route path="/signin" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
+        <Route path="/verify/:token" element={<VerifyEmail />} />
+        <Route path="/verification" element={<Verification />} />
       </Route>
 
       {/* Host routes without Navbar/Footer */}

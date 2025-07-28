@@ -205,8 +205,8 @@ exports.deleteUser = async (req, res) => {
 
 exports.sendVeriification = async (req, res) => {
     try{
-        const userId = req.user.id;
-        const host = await User.findOne({ userId });
+        const email = req.body;
+        const host = await User.findOne({ email });
 
         if(!host){
             return res.status(404).json({message: 'User not found'});
@@ -218,7 +218,7 @@ exports.sendVeriification = async (req, res) => {
             { expiresIn: "1d" }
         );
 
-        await sendVerificationEmail(host.email, verificationToken);
+        await sendVerificationEmail(email, verificationToken);
         res.status(200).json({message: 'Verification email sent successfully'});
     }catch(error){
         res.status(500).json({error: 'Failed to send verification link', details: error.message});
