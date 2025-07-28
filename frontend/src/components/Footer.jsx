@@ -22,7 +22,7 @@ export default function Footer() {
             Quiz App
           </a>
         </p>
-        <p className="text-xs">Developed by <a href="/about" className="text-blue-900">S JAY Web Solutions (Pvt) Ltd</a></p>
+        <p className="text-xs">Developed by <a href="/about" className="text-blue-900" onClick={handleClick}>S JAY Web Solutions (Pvt) Ltd</a></p>
       </div>
     </footer>
   );
