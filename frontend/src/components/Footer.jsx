@@ -8,7 +8,7 @@ export default function Footer() {
         <p className="mb-2">
           Create your own Quiz at{" "}
           <a
-            href="/register"
+            href="/signup"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:underline"
