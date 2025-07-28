@@ -1,7 +1,7 @@
 const Session = require('../models/sessions');
 
 exports.createSession = async (req, res) => {
-  const { code, name, description, questionId } = req.body;
+  const { code, title, questionId } = req.body;
   const hostId = req.user.id;
 
   try {
@@ -14,9 +14,9 @@ exports.createSession = async (req, res) => {
     const newSession = new Session({
       code,
       hostId,
-      name,
-      description,
+      title,
       questionId,
+      active:true
     });
 
     await newSession.save();
@@ -26,12 +26,33 @@ exports.createSession = async (req, res) => {
       session: newSession,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error: "Failed to create session",
       details: error.message,
     });
   }
 };
+
+exports.getSessionsByHostId = async (req,res) => {
+  const hostId = req.user.id;
+  try {
+    const sessionData = await Session.find({ hostId }).populate("questionId");
+
+    if (!sessionData) {
+      return res.status(404).json({ message: "No sessions from you" });
+    }
+    res.status(200).json({
+      message: "Session retrieved successfully",
+      session: sessionData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to fetch the session",
+      details: error.message,
+    });
+  }
+}
 
 exports.getSession = async (req, res) => {
   const { code } = req.params;
