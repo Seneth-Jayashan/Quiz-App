@@ -48,7 +48,7 @@ export default function Result() {
         setScores(res.data.scores);
       } catch (err) {
         console.error(err);
-        setError("Failed to fetch scores");
+        setError("No responses found");
       }
     };
     fetchScores();
@@ -77,7 +77,7 @@ export default function Result() {
         setQuestionsData(combinedData);
       } catch (err) {
         console.error(err);
-        setError("Failed to fetch question data and responses");
+        setError("No responses found");
       } finally {
         setLoading(false);
       }
@@ -96,7 +96,7 @@ export default function Result() {
         />
       </div>
     );
-  if (error) return <p className="text-red-600 text-center mt-10">{error}</p>;
+  if (error) return <p className="text-red-600 text-center mt-10 py-20">{error}</p>;
   if (!session) return <p className="text-center mt-10">No session data.</p>;
 
   const totalQuestions = session.questionId.length;
