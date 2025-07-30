@@ -45,7 +45,7 @@ export default function Sessions() {
     fetchSessions();
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id,sessionCode) => {
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "Do you really want to delete this session?",
@@ -61,6 +61,15 @@ export default function Sessions() {
         await api.delete(`/session/`, {
           headers: { Authorization: `Bearer ${token}` },
           data: { id },
+        });
+
+        await api.delete(`/score/`, {
+          data: { sessionCode },
+        });
+
+        await api.delete(`/response/delete`, {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { sessionCode },
         });
 
         Swal.fire({
@@ -225,7 +234,7 @@ export default function Sessions() {
                     Print Code & QR
                   </button>
                   <button
-                    onClick={() => handleDelete(session._id)}
+                    onClick={() => handleDelete(session._id, session.code)}
                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
                   >
                     Delete
