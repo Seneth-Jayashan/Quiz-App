@@ -9,6 +9,7 @@ import Questions from "../pages/host/Questions";
 import Result from "../pages/host/Result";
 import Results from "../pages/host/Results";
 import Sessions from "../pages/host/Sessions";
+import Students from "../pages/host/Students";
 import Sidebar from "../components/Sidebar";
 
 export default function UserDashboard() {
@@ -29,12 +30,12 @@ export default function UserDashboard() {
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-30 z-40"
+          className="fixed inset-0 bg-black bg-opacity-30 z-10"
           onClick={toggleSidebar}
         ></div>
       )}
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col z-20">
         <header className="bg-white shadow p-4 flex justify-between items-center fixed top-0 w-full">
           <button
             className="text-gray-600 hover:text-gray-800"
@@ -62,6 +63,7 @@ export default function UserDashboard() {
             <Route path="/result/:sessionCode" element={<Result />} />
             <Route path="/results" element={<Results />} />
             <Route path="/sessions" element={<Sessions />} />
+            <Route path="/students/:sessionCode" element={<Students />} />
           </Routes>
         </main>
       </div>

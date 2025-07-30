@@ -4,7 +4,6 @@ import CreateQuestion from "../../components/CreateQuestion";
 import UpdateQuestion from "../../components/updateQuestion";
 import { PencilIcon, TrashIcon } from "@heroicons/react/outline";
 
-
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Questions() {
@@ -81,18 +80,18 @@ export default function Questions() {
       </div>
 
       {loading ? (
-         <div className="flex justify-center items-center min-h-screen">
-            <motion.div
-              className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-            />
-          </div>
+        <div className="flex justify-center items-center min-h-screen">
+          <motion.div
+            className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          />
+        </div>
       ) : questions.length === 0 ? (
         <p className="text-center text-gray-600">You have not created any questions yet.</p>
       ) : (
         <motion.div
-          className="space-y-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
@@ -101,53 +100,59 @@ export default function Questions() {
             {questions.map((q) => (
               <motion.div
                 key={q._id}
-                className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 cursor-pointer
-                  hover:shadow-lg hover:bg-blue-50 transition-shadow duration-300"
-                initial={{ opacity: 0, y: 10 }}
+                className="bg-white border border-gray-200 rounded-3xl shadow-md p-8 cursor-pointer
+                  hover:shadow-xl hover:bg-blue-50 transition-shadow duration-300 flex flex-col justify-between"
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                exit={{ opacity: 0, y: -15 }}
                 layout
                 role="group"
                 tabIndex={0}
                 aria-label={`Question card: ${q.text}`}
               >
-                <h3 className="font-semibold text-gray-900 text-lg mb-4">{q.text}</h3>
-                <ul className="list-disc list-inside text-gray-700 mb-6 space-y-1">
-                  {q.options.map((opt, i) => (
-                    <li
-                      key={i}
-                      className={
-                        opt.optionNumber === q.correctAnswer
-                          ? "font-semibold text-green-600"
-                          : "text-gray-700"
-                      }
-                    >
-                      {opt.optionText}
-                      {opt.optionNumber === q.correctAnswer && (
-                        <span className="ml-2 inline-block bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full font-medium">
-                          Correct
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                <div className="flex gap-4 text-sm">
+                <div>
+                  <h3 className="font-semibold text-gray-900 text-xl mb-6 leading-relaxed">{q.text}</h3>
+                  <ul className="flex flex-wrap gap-3 mb-6">
+                    {q.options.map((opt, i) => (
+                      <li
+                        key={i}
+                        className={`px-4 py-2 rounded-full text-sm font-medium 
+                          ${
+                            opt.optionNumber === q.correctAnswer
+                              ? "bg-green-200 text-green-900 border border-green-400"
+                              : "bg-gray-100 text-gray-700 border border-transparent"
+                          }
+                          transition-colors duration-200`}
+                      >
+                        {opt.optionText}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex gap-5 mt-auto">
                   <button
-                    onClick={() => handleEdit(q)}
-                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-full px-3 py-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEdit(q);
+                    }}
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-full px-4 py-2 font-semibold transition"
                     aria-label={`Edit question: ${q.text}`}
                     type="button"
                   >
-                    <PencilIcon className="w-4 h-4" />
+                    <PencilIcon className="w-5 h-5" />
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(q._id)}
-                    className="flex items-center gap-1 text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-400 rounded-full px-3 py-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(q._id);
+                    }}
+                    className="flex items-center gap-2 text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-400 rounded-full px-4 py-2 font-semibold transition"
                     aria-label={`Delete question: ${q.text}`}
                     type="button"
                   >
-                    <TrashIcon className="w-4 h-4" />
+                    <TrashIcon className="w-5 h-5" />
                     Delete
                   </button>
                 </div>

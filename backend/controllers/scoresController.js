@@ -62,6 +62,33 @@ exports.getScores = async(req, res) => {
     }
 };
 
+exports.getSessionScores = async (req, res) => {
+  try {
+    let { sessionCode } = req.params;
+
+    sessionCode = Number(sessionCode);
+
+    const scores = await Score.find({ sessionCode });
+
+    if (!scores || scores.length === 0) {
+      return res.status(404).json({ message: 'No scores found' });
+    }
+
+    res.status(200).json({
+      message: `${scores.length} scores found`,
+      scores
+    });
+  } catch (error) {
+    console.error("Error fetching session scores:", error);
+    res.status(500).json({
+      message: 'Error fetching scores',
+      error: error.message
+    });
+  }
+};
+
+
+
 exports.clearScore = async(req, res) => {
     const {sessionCode} = req.body;
     try{
