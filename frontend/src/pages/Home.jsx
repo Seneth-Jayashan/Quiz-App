@@ -11,7 +11,6 @@ export default function Home() {
       alert("Please enter a session code");
       return;
     }
-
     // Redirect to Quiz page with the code in the URL
     navigate(`/quiz?code=${code}`);
   };

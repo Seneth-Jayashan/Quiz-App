@@ -9,6 +9,7 @@ import Quiz from "./pages/Quiz";
 import VerifyEmail from "./components/verifyemail";
 import Verification from "./pages/Verification";
 import About from "./pages/About";
+import Result from "./pages/Result";
 
 import UserDashboard from './routes/userDashboard';
 
@@ -27,6 +28,7 @@ function App() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/quiz" element={<Quiz />} />
+        <Route path="/result" element={<Result />} />
         <Route path="/about" element={<About />} />
         <Route path="/signup" element={<Register />} />
         <Route path="/signin" element={<Login />} />

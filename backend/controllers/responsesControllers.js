@@ -71,3 +71,22 @@ exports.getResults = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+exports.clearResponses = async(req, res) => {
+  const {sessionCode} = req.body;
+  const hostId = req.user.id;
+
+  try{
+    const responses = await Response.deleteMany({hostId, sessionCode});
+
+    if(!responses){
+      return res.status(200).json({message: 'No responses found'});
+    }
+
+    res.status(200).json({message: 'All response deleted belongs to this session code'});
+  }catch(error){
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
