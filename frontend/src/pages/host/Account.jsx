@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import api from "../../api/axios";
-
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Account() {
@@ -26,7 +25,6 @@ export default function Account() {
   }));
   const [editMode, setEditMode] = useState(false);
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -52,7 +50,6 @@ export default function Account() {
 
   const handleSave = async () => {
     try {
-      setLoading(true); // start loading
       const data = new FormData();
       data.append("firstName", formData.firstName);
       data.append("lastName", formData.lastName);
@@ -70,29 +67,14 @@ export default function Account() {
       });
 
       setUser(response.data.user);
-      localStorage.setItem("userData", JSON.stringify(response.data.user));
+      localStorage.setItem("data", JSON.stringify(response.data.user));
       setEditMode(false);
       setMessage("Changes saved successfully!");
     } catch (error) {
       console.error(error);
       setMessage("Failed to save changes.");
-    } finally {
-      setLoading(false); // stop loading
     }
   };
-
-  // Show loading animation while saving
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <motion.div
-          className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-        />
-      </div>
-    );
-  }
 
   if (!user || (!user.userId && !user.id)) {
     return (
@@ -148,13 +130,8 @@ export default function Account() {
           </p>
         </div>
 
-        <form
-          className="space-y-6"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSave();
-          }}
-        >
+        {/* Replaced <form> with <div> */}
+        <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {["firstName", "lastName", "username"].map((field) => (
               <div key={field}>
@@ -216,7 +193,8 @@ export default function Account() {
             ) : (
               <>
                 <motion.button
-                  type="submit"
+                  type="button"
+                  onClick={handleSave}
                   className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 shadow-md"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -228,7 +206,6 @@ export default function Account() {
                   onClick={() => {
                     setEditMode(false);
                     setMessage("");
-                    // Reset form data on cancel
                     setFormData({
                       firstName: user.firstName || "",
                       lastName: user.lastName || "",
@@ -245,7 +222,7 @@ export default function Account() {
               </>
             )}
           </div>
-        </form>
+        </div>
 
         <AnimatePresence>
           {message && (
@@ -253,11 +230,7 @@ export default function Account() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className={`mt-6 text-center font-medium ${
-                message.includes("Failed")
-                  ? "text-red-600"
-                  : "text-green-600"
-              }`}
+              className="mt-6 text-center text-green-600 font-medium"
             >
               {message}
             </motion.p>
