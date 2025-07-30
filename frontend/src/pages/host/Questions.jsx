@@ -81,7 +81,13 @@ export default function Questions() {
       </div>
 
       {loading ? (
-        <p className="text-center text-gray-600">Loading questions...</p>
+         <div className="flex justify-center items-center min-h-screen">
+            <motion.div
+              className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+            />
+          </div>
       ) : questions.length === 0 ? (
         <p className="text-center text-gray-600">You have not created any questions yet.</p>
       ) : (
@@ -96,7 +102,7 @@ export default function Questions() {
               <motion.div
                 key={q._id}
                 className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 cursor-pointer
-                  hover:shadow-lg hover:bg-blue-50 transition-shadow transition-colors duration-300"
+                  hover:shadow-lg hover:bg-blue-50 transition-shadow duration-300"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}

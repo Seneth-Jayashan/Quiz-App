@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Dashboard() {
   const localData = localStorage.getItem("data");
@@ -62,7 +63,16 @@ export default function Dashboard() {
     navigate(`/user-dashboard/result/${session.code}`);
   };
 
-  if (loading) return <p className="text-center p-6">Loading dashboard...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <motion.div
+          className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+        />
+      </div>
+  );
   if (error) return <p className="text-center p-6 text-red-600">{error}</p>;
   if (!user) return <p className="text-center p-6 text-red-600">User data not found.</p>;
 
@@ -74,7 +84,7 @@ export default function Dashboard() {
           src={
             user.profilePicture
               ? `${import.meta.env.VITE_SERVER_URL}${user.profilePicture}`
-              : "/default-avatar.png"
+              : "/default.jpg"
           }
           alt="Profile"
           className="w-20 h-20 rounded-full object-cover"
