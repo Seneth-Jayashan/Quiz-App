@@ -85,7 +85,7 @@ export default function Account() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 py-20">
       <motion.div
         className="bg-white p-10 rounded-2xl shadow-xl w-full max-w-xl"
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
