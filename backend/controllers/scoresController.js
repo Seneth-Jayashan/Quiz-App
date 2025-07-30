@@ -91,6 +91,8 @@ exports.getSessionScores = async (req, res) => {
 
 exports.clearScore = async(req, res) => {
     const {sessionCode} = req.body;
+      console.log(sessionCode);
+
     try{
         const score = await Score.deleteMany({sessionCode});
 

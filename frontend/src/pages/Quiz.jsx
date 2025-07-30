@@ -26,7 +26,7 @@ export default function Quiz() {
   const [loading, setLoading] = useState(true);
 
   const [studentName, setStudentName] = useState(localStorage.getItem("stdName") || "");
-  const [hasStarted, setHasStarted] = useState(false); // fixed logic
+  const [hasStarted, setHasStarted] = useState(false);
 
   const [allAnswers, setAllAnswers] = useState([]);
 
@@ -65,7 +65,7 @@ export default function Quiz() {
       navigate("/");
       return;
     }
-    setHasStarted(false); // always start with name screen unless quiz is in progress
+    setHasStarted(false);
   }, [code]);
 
   // Fetch question
@@ -99,24 +99,44 @@ export default function Quiz() {
     setSelectedAnswer(optionNumber);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (selectedAnswer === null) return;
 
     const questionId = session.questionId[currentIndex];
 
-    setAllAnswers((prev) => [
-      ...prev,
+    // Collect answers in state
+    const newAnswers = [
+      ...allAnswers,
       { questionId, selectAnswer: selectedAnswer },
-    ]);
+    ];
+    setAllAnswers(newAnswers);
 
+    // Send response to /response for vote tracking
+    try {
+      await api.post(
+        "/response",
+        {
+          sessionCode: code,
+          questionId,
+          selectedOption: selectedAnswer,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    } catch (err) {
+      console.error("Error sending response to /response", err);
+    }
+
+    // Next or finish
     if (currentIndex < session.questionId.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      submitScore();
+      submitScore(newAnswers);
     }
   };
 
-  const submitScore = async () => {
+  const submitScore = async (finalAnswers) => {
     const stdId = localStorage.getItem("stdId");
     const stdName = localStorage.getItem("stdName");
 
@@ -124,10 +144,7 @@ export default function Quiz() {
       stdId,
       stdName,
       sessionCode: code,
-      answers: [
-        ...allAnswers,
-        { questionId: session.questionId[currentIndex], selectAnswer: selectedAnswer },
-      ],
+      answers: finalAnswers,
     };
 
     try {
@@ -136,10 +153,10 @@ export default function Quiz() {
       });
 
       const { correctAnswers, totalAnswered } = response.data;
-      const scorePercentage = totalAnswered > 0 ? (correctAnswers / totalAnswered) * 100 : 0;
+      const scorePercentage =
+        totalAnswered > 0 ? (correctAnswers / totalAnswered) * 100 : 0;
 
       localStorage.setItem(quizKey, stdId);
-
       localStorage.setItem("scoreData", scorePercentage.toFixed(2));
 
       Swal.fire({
@@ -176,7 +193,6 @@ export default function Quiz() {
   };
 
   // UI rendering
-
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -222,7 +238,19 @@ export default function Quiz() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto min-h-screen flex flex-col justify-center">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">{session.title}</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        {session.title}
+      </h1>
+
+      {/* Progress Bar */}
+      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+        <div
+          className="bg-blue-600 h-2.5 rounded-full"
+          style={{
+            width: `${((currentIndex + 1) / session.questionId.length) * 100}%`,
+          }}
+        />
+      </div>
 
       <AnimatePresence mode="wait">
         <motion.div

@@ -4,12 +4,11 @@ const {
     getResults,
     clearResponses
 } = require('../controllers/responsesControllers');
-const {authMiddleware} = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 router.post('/', submitVote);
 router.get('/:sessionCode/:questionId', getResults);
-router.delete('/delete', authMiddleware, clearResponses )
+router.delete('/delete',  clearResponses )
 
 module.exports = router;

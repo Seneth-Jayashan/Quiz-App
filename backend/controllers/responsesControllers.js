@@ -75,10 +75,10 @@ exports.getResults = async (req, res) => {
 
 exports.clearResponses = async(req, res) => {
   const {sessionCode} = req.body;
-  const hostId = req.user.id;
+
 
   try{
-    const responses = await Response.deleteMany({hostId, sessionCode});
+    const responses = await Response.deleteMany({sessionCode});
 
     if(!responses){
       return res.status(200).json({message: 'No responses found'});
