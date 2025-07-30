@@ -24,6 +24,23 @@ export default function CreateQuestion({ onClose, onCreated }) {
     ]);
   };
 
+  const removeOption = (indexToRemove) => {
+    if (options.length <= 2) return;
+
+    const updatedOptions = options
+      .filter((_, index) => index !== indexToRemove)
+      .map((opt, i) => ({
+        ...opt,
+        optionNumber: i + 1, 
+      }));
+
+    setOptions(updatedOptions);
+
+    if (correctAnswer > updatedOptions.length) {
+      setCorrectAnswer(1);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newQuestion = { text, options, correctAnswer };
@@ -79,7 +96,7 @@ export default function CreateQuestion({ onClose, onCreated }) {
         <div className="mb-4">
           <label className="block font-medium mb-2">Options</label>
           {options.map((opt, index) => (
-            <div key={opt.optionNumber} className="flex gap-2 mb-2">
+            <div key={opt.optionNumber} className="flex gap-2 mb-2 items-center">
               <input
                 type="text"
                 value={opt.optionText}
@@ -95,6 +112,16 @@ export default function CreateQuestion({ onClose, onCreated }) {
                 onChange={() => setCorrectAnswer(opt.optionNumber)}
               />
               <span className="text-sm self-center">Correct</span>
+
+              {options.length > 2 && (
+                <button
+                  type="button"
+                  onClick={() => removeOption(index)}
+                  className="text-red-500 text-sm ml-2"
+                >
+                  Remove
+                </button>
+              )}
             </div>
           ))}
           <button
