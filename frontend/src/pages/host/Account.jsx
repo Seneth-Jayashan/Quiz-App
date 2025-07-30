@@ -26,6 +26,7 @@ export default function Account() {
   }));
   const [editMode, setEditMode] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export default function Account() {
 
   const handleSave = async () => {
     try {
+      setLoading(true); // start loading
       const data = new FormData();
       data.append("firstName", formData.firstName);
       data.append("lastName", formData.lastName);
@@ -74,8 +76,23 @@ export default function Account() {
     } catch (error) {
       console.error(error);
       setMessage("Failed to save changes.");
+    } finally {
+      setLoading(false); // stop loading
     }
   };
+
+  // Show loading animation while saving
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <motion.div
+          className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+        />
+      </div>
+    );
+  }
 
   if (!user || (!user.userId && !user.id)) {
     return (
@@ -100,7 +117,7 @@ export default function Account() {
                 ? URL.createObjectURL(formData.profilePicture)
                 : user.profilePicture
                 ? `${import.meta.env.VITE_SERVER_URL}${user.profilePicture}`
-                : "/default-avatar.png"
+                : "/default.jpg"
             }
             alt="Profile"
             className="w-28 h-28 rounded-full border-4 border-gray-200 mb-5 object-cover"
@@ -236,7 +253,11 @@ export default function Account() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="mt-6 text-center text-green-600 font-medium"
+              className={`mt-6 text-center font-medium ${
+                message.includes("Failed")
+                  ? "text-red-600"
+                  : "text-green-600"
+              }`}
             >
               {message}
             </motion.p>

@@ -143,7 +143,15 @@ export default function Sessions() {
   };
 
   if (loading)
-    return <p className="text-center text-gray-500 mt-10">Loading ongoing sessions...</p>;
+      return (
+        <div className="flex justify-center items-center min-h-screen">
+          <motion.div
+            className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          />
+        </div>
+    );
   if (error)
     return <p className="text-center text-red-600 mt-10">{error}</p>;
 

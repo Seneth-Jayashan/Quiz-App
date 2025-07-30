@@ -16,7 +16,7 @@ const userSchema = new Schema({
     email: {type: String, required: true, unique: true},
     username: {type: String, required: true, unique: true},
     password: {type: String, required: true},
-    profilePicture: {type: String, default: 'default.jpg'},
+    profilePicture: {type: String, default: '/uploads/default.jpg'},
     resetToken: {type: String, default: null},
     resetTokenExpiration: {type: Date, default: null},
     role: { type: String, enum: ['user', 'admin'], default: 'user' },

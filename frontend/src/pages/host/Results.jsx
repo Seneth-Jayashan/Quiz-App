@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
+
 export default function Results() {
   const navigate = useNavigate();
   const [sessions, setSessions] = useState([]);
@@ -45,8 +46,14 @@ export default function Results() {
   };
 
   if (loading)
-    return (
-      <p className="text-center text-gray-500 mt-10">Loading sessions...</p>
+      return (
+        <div className="flex justify-center items-center min-h-screen">
+          <motion.div
+            className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          />
+        </div>
     );
   if (error)
     return (

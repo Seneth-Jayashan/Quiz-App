@@ -3,8 +3,7 @@ import api from "../api/axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import Swal from "sweetalert2";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -31,7 +30,10 @@ export default function Quiz() {
         setSession(res.data.session);
       } catch (err) {
         console.error(err);
-        toast.error("Session not found or error fetching data.");
+        toast.error("Session not found or Incorrect session Code.");
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       } finally {
         setLoading(false);
       }
@@ -41,6 +43,9 @@ export default function Quiz() {
     else {
       toast.error("No session code provided.");
       setLoading(false);
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     }
   }, [code]);
 
@@ -58,7 +63,10 @@ export default function Quiz() {
         setSelectedAnswer(null);
       } catch (err) {
         console.error(err);
-        toast.error("Error fetching question.");
+        toast.error("Error fetching question.Please try again");
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       } finally {
         setLoading(false);
       }
@@ -86,7 +94,8 @@ export default function Quiz() {
       });
     } catch (error) {
       console.error(error);
-      toast.error("Error saving response.");
+      toast.error("Error saving response.Please try again");
+      navigate('/');
       return;
     }
 
@@ -104,14 +113,22 @@ export default function Quiz() {
     }
   };
 
-  if (loading) return <p className="text-center mt-10 text-gray-600">Loading...</p>;
-  if (!session) return <p className="text-center mt-10 text-red-600">No session found.</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <motion.div
+          className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+        />
+      </div>
+  );
+  if (!session) return <p className="text-center mt-10 text-red-600 min-h-screen flex justify-center items-center">No session found.</p>;
   if (!currentQuestion || !currentQuestion.options)
     return <p className="text-center mt-10 text-gray-600">Loading question...</p>;
 
   return (
     <div className="p-6 max-w-2xl mx-auto min-h-screen flex flex-col justify-center">
-      <ToastContainer />
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">{session.title}</h1>
 
       <AnimatePresence mode="wait">

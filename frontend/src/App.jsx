@@ -16,14 +16,15 @@ import PublicLayout from "./layouts/PublicLayout";
 import HostLayout from "./layouts/HostLayout";
 
 import ProtectedRoute from "./components/protectedRoutes";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
+    <>
+    <ToastContainer position="top-right" autoClose={3000} />
+
     <Routes>
-      {/* Public routes with Navbar/Footer */}
-      <Route
-        element={<PublicLayout />}
-      >
+      <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/about" element={<About />} />
@@ -42,7 +43,7 @@ function App() {
         />
       </Route>
     </Routes>
-    
+    </>
   );
 }
 
