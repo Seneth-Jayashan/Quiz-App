@@ -30,6 +30,9 @@ export default function Quiz() {
 
   const [allAnswers, setAllAnswers] = useState([]);
 
+  // ** New state for preventing double clicks **
+  const [nextLoading, setNextLoading] = useState(false);
+
   // Fetch session info
   useEffect(() => {
     const fetchSession = async () => {
@@ -100,19 +103,21 @@ export default function Quiz() {
   };
 
   const handleNext = async () => {
-    if (selectedAnswer === null) return;
+    // Prevent clicking multiple times
+    if (selectedAnswer === null || nextLoading) return;
+
+    setNextLoading(true);
 
     const questionId = session.questionId[currentIndex];
 
-    // Collect answers in state
     const newAnswers = [
       ...allAnswers,
       { questionId, selectAnswer: selectedAnswer },
     ];
     setAllAnswers(newAnswers);
 
-    // Send response to /response for vote tracking
     try {
+      // Send to /response
       await api.post(
         "/response",
         {
@@ -124,15 +129,17 @@ export default function Quiz() {
           headers: { "Content-Type": "application/json" },
         }
       );
+
+      // Move to next question or finish
+      if (currentIndex < session.questionId.length - 1) {
+        setCurrentIndex((prev) => prev + 1);
+      } else {
+        await submitScore(newAnswers);
+      }
     } catch (err) {
       console.error("Error sending response to /response", err);
-    }
-
-    // Next or finish
-    if (currentIndex < session.questionId.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
-    } else {
-      submitScore(newAnswers);
+    } finally {
+      setNextLoading(false);
     }
   };
 
@@ -237,7 +244,7 @@ export default function Quiz() {
     return <p className="text-center mt-10 text-gray-600">Loading question...</p>;
 
   return (
-    <div className="p-6 max-w-2xl mx-auto min-h-screen flex flex-col justify-center">
+    <div className="p-6 max-w-2xl mx-auto min-h-screen flex flex-col justify-center py-20">
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
         {session.title}
       </h1>
@@ -290,13 +297,19 @@ export default function Quiz() {
           <div className="mt-8 text-right">
             <motion.button
               onClick={handleNext}
-              disabled={selectedAnswer === null}
+              disabled={selectedAnswer === null || nextLoading}
               className="bg-blue-600 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold shadow-md
-                         hover:bg-blue-700 disabled:cursor-not-allowed transition"
-              whileHover={selectedAnswer !== null ? { scale: 1.05 } : {}}
-              whileTap={selectedAnswer !== null ? { scale: 0.95 } : {}}
+                         hover:bg-blue-700 disabled:cursor-not-allowed transition flex items-center justify-center"
+              whileHover={selectedAnswer !== null && !nextLoading ? { scale: 1.05 } : {}}
+              whileTap={selectedAnswer !== null && !nextLoading ? { scale: 0.95 } : {}}
             >
-              {currentIndex === session.questionId.length - 1 ? "Finish" : "Next"}
+              {nextLoading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : currentIndex === session.questionId.length - 1 ? (
+                "Finish"
+              ) : (
+                "Next"
+              )}
             </motion.button>
           </div>
         </motion.div>
