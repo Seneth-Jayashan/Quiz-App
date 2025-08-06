@@ -135,19 +135,28 @@ export default function Result() {
           </div>
         </div>
 
-        <button
-          onClick={() => setSelectedQuiz("")}
-          className="mt-10 px-8 py-3 bg-gray-500 text-white rounded-full font-semibold hover:bg-gray-600 transition shadow-md mr-4"
-        >
-          Back
-        </button>
+        <div className="flex md:gap-2 justify-center flex-col md:flex-row">
+          <button
+            onClick={() => setSelectedQuiz("")}
+            className="mt-10 px-8 py-3 bg-gray-500 text-white rounded-full font-semibold hover:bg-gray-600 transition shadow-md"
+          >
+            Back
+          </button>
 
-        <button
-          onClick={() => (window.location.href = "/")}
-          className="mt-10 px-8 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition shadow-md"
-        >
-          Home
-        </button>
+          <button
+            onClick={() => (window.location.href = "/")}
+            className="mt-10 px-8 py-3 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition shadow-md"
+          >
+            Check Answers
+          </button>
+
+          <button
+            onClick={() => (window.location.href = "/")}
+            className="mt-10 px-8 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition shadow-md"
+          >
+            Home
+          </button>
+        </div>
       </motion.div>
     </div>
   );
