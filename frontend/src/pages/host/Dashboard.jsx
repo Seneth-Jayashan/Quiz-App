@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Dashboard() {
   const localData = localStorage.getItem("data");
@@ -11,10 +11,13 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const [sessions, setSessions] = useState([]);
-  const [studentsAnsweredMap, setStudentsAnsweredMap] = useState({}); // sessionCode => count
+  const [studentsAnsweredMap, setStudentsAnsweredMap] = useState({});
   const [questionsCount, setQuestionsCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Modal state
+  const [showWarning, setShowWarning] = useState(true);
 
   useEffect(() => {
     if (!token) {
@@ -27,21 +30,22 @@ export default function Dashboard() {
       try {
         setLoading(true);
 
-        // Fetch sessions
         const sessionsRes = await api.get("/session/", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const sessionsData = sessionsRes.data.sessions || sessionsRes.data.session || [];
+        const sessionsData =
+          sessionsRes.data.sessions || sessionsRes.data.session || [];
         const sessionsArray = Array.isArray(sessionsData) ? sessionsData : [];
         setSessions(sessionsArray);
 
-        // Fetch questions count
         try {
           const questionsRes = await api.get("/question/my", {
             headers: { Authorization: `Bearer ${token}` },
           });
           const questionsData = questionsRes.data.questions || [];
-          setQuestionsCount(Array.isArray(questionsData) ? questionsData.length : 0);
+          setQuestionsCount(
+            Array.isArray(questionsData) ? questionsData.length : 0
+          );
         } catch (err) {
           if (err.response?.status === 404) {
             setQuestionsCount(0);
@@ -50,14 +54,16 @@ export default function Dashboard() {
           }
         }
 
-        // Fetch students answered count for each session
         const answeredCounts = {};
         await Promise.all(
           sessionsArray.map(async (session) => {
             try {
-              const scoreRes = await api.get(`/score/session/${session.code}`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
+              const scoreRes = await api.get(
+                `/score/session/${session.code}`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
               const scores = scoreRes.data.scores || [];
               answeredCounts[session.code] = scores.length;
             } catch {
@@ -106,6 +112,43 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-6xl mx-auto p-8 space-y-16 bg-gray-50 min-h-screen py-20">
+      {/* Warning Modal */}
+      <AnimatePresence>
+        {showWarning && (
+          <motion.div
+            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 text-center"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+            >
+              <h2 className="text-2xl font-bold text-red-600 mb-4">
+                ⚠ Please Don't Add New Questions and Sessions After This Sunday (10/08/2025)
+              </h2>
+              <p className="text-gray-700 mb-6">
+                Please backup your questions as we are going to update to a new version.
+                This may cause problems to your account and its data.
+              </p>
+              <p className="text-gray-500 mb-6 text-left ">
+                <span className="font-bold text-green-700 ">New Features : </span>
+                Subscriptions | New Quiz Structure | Multiple Choices Questions | Questions Import from .csv file | Enhance UI Designs 
+              </p>
+              <button
+                onClick={() => setShowWarning(false)}
+                className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition"
+              >
+                I Understand
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* User Info */}
       <div className="bg-white rounded-3xl shadow-md p-8 flex items-center gap-10">
         <img
@@ -139,7 +182,6 @@ export default function Dashboard() {
           className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-lg p-8 text-white flex flex-col items-center"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300 }}
-          aria-label="Published sessions count"
         >
           <p className="uppercase tracking-wider font-semibold text-lg">Published Sessions</p>
           <p className="text-5xl font-extrabold mt-3">{sessions.length}</p>
@@ -149,7 +191,6 @@ export default function Dashboard() {
           className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg p-8 text-white flex flex-col items-center"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300 }}
-          aria-label="Questions created count"
         >
           <p className="uppercase tracking-wider font-semibold text-lg">Questions Created</p>
           <p className="text-5xl font-extrabold mt-3">{questionsCount}</p>
@@ -159,7 +200,6 @@ export default function Dashboard() {
           className="bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl shadow-lg p-8 text-white flex flex-col items-center"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300 }}
-          aria-label="Total students answered sessions"
         >
           <p className="uppercase tracking-wider font-semibold text-lg">Total Students Answered</p>
           <p className="text-5xl font-extrabold mt-3">
@@ -171,7 +211,6 @@ export default function Dashboard() {
       {/* Sessions List */}
       <section className="bg-white rounded-3xl shadow-md p-8">
         <h2 className="text-3xl font-extrabold text-gray-900 mb-6">My Sessions</h2>
-
         {sessions.length === 0 ? (
           <p className="text-gray-600 text-lg">No sessions created yet.</p>
         ) : (
@@ -181,23 +220,22 @@ export default function Dashboard() {
                 key={session._id}
                 className="cursor-pointer rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-lg transition-shadow flex flex-col sm:flex-row sm:justify-between sm:items-center"
                 onClick={() => handleShowResults(session)}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") handleShowResults(session);
-                }}
-                aria-label={`Show results for session: ${session.title || "Untitled"}`}
-                whileHover={{ scale: 1.02, boxShadow: "0 10px 25px rgba(59, 130, 246, 0.3)" }}
+                whileHover={{ scale: 1.02 }}
               >
                 <div className="font-semibold text-xl text-gray-800 mb-3 sm:mb-0">
                   {session.title || "Untitled Session"}
                 </div>
                 <div className="flex gap-10 text-gray-700 font-medium text-center">
                   <div>
-                    <p className="text-sm text-gray-400 uppercase tracking-wide">Students Answered</p>
+                    <p className="text-sm text-gray-400 uppercase tracking-wide">
+                      Students Answered
+                    </p>
                     <p className="text-2xl">{studentsAnsweredMap[session.code] || 0}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400 uppercase tracking-wide">Session Code</p>
+                    <p className="text-sm text-gray-400 uppercase tracking-wide">
+                      Session Code
+                    </p>
                     <p className="text-2xl font-mono">{session.code}</p>
                   </div>
                 </div>

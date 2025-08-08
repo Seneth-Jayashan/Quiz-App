@@ -232,11 +232,15 @@ export default function Result() {
     const results = responses?.results || {};
     const answerCount = Array.isArray(results.answerCount) ? results.answerCount : [];
 
+    // Break long labels into multiline arrays
     const labels = answerCount.map((opt) => {
       const matchingOption = actualQuestion.options.find(
         (o) => o.optionNumber === opt.optionNumber
       );
-      return matchingOption ? matchingOption.optionText : `Option ${opt.optionNumber}`;
+      const fullText = matchingOption ? matchingOption.optionText : `Option ${opt.optionNumber}`;
+      // Split label into lines of max ~15 characters (adjust as needed)
+      const regex = /.{1,15}(\s|$)/g;
+      return fullText.match(regex).map(line => line.trim());
     });
 
     const counts = answerCount.map((opt) => opt.count);
@@ -272,6 +276,57 @@ export default function Result() {
       ],
     };
 
+    const chartOptions = {
+      maintainAspectRatio: false,
+      layout: {
+        padding: {
+          bottom: 80, // extra space for multiline labels
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            maxRotation: 0,
+            minRotation: 0,
+            color: "#374151",
+            font: {
+              size: 14,
+              weight: "600",
+            },
+            // no need for callback here as labels are already arrays for multiline
+            maxWidth: 120, // constrain max label width
+          },
+          grid: {
+            color: "#E5E7EB",
+          },
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: "#4B5563",
+            font: {
+              size: 16,
+              weight: "600",
+            },
+          },
+          grid: {
+            color: "#E5E7EB",
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          backgroundColor: "#1E3A8A",
+          titleFont: { size: 15, weight: "700" },
+          bodyFont: { size: 14 },
+        },
+      },
+      responsive: true,
+    };
+
     return (
       <div
         onClick={closeModal}
@@ -293,8 +348,8 @@ export default function Result() {
             &times;
           </button>
           <h2 className="text-3xl font-semibold mb-6">{actualQuestion.text}</h2>
-          <div style={{ height: "320px" }}>
-            <Bar data={chartData} options={{ maintainAspectRatio: false }} />
+          <div style={{ height: "480px", paddingBottom: "40px" }}>
+            <Bar data={chartData} options={chartOptions} />
           </div>
           <p className="mt-6 text-gray-700">
             Correct answers submitted: <strong>{results.correctCount || 0}</strong>
