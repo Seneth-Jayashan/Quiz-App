@@ -1,55 +1,77 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Home() {
-  const [code, setCode] = useState("");
+  const [quizCode, setQuizCode] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleJoin = () => {
-    if (!code.trim()) {
-      alert("Please enter a session code");
+  const handleChange = (e) => {
+    const val = e.target.value;
+    if (val.length <= 6 && /^[0-9]*$/.test(val)) {
+      setQuizCode(val);
+      setError("");
+    } else {
+      setError("Code must be up to 6 digits (numbers only).");
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (quizCode.length !== 6) {
+      setError("Please enter exactly 6 digits.");
       return;
     }
-    // Redirect to Quiz page with the code in the URL
-    navigate(`/quiz?code=${code}`);
+    navigate(`/quiz?code=${quizCode}`);
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-900">
-      <motion.main
-        className="flex flex-1 items-center justify-center p-6"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.4 }}
+      className=""
+    >
+      <h1 className="text-4xl font-bold mb-8 text-blue-800 dark:text-blue-200">
+        Enter Quiz Code
+      </h1>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center w-full max-w-xs"
       >
-        <div className="bg-white/70 backdrop-blur-lg shadow-xl rounded-2xl p-8 max-w-md w-full">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
-            Enter the Code
-          </h1>
-          <p className="mb-6 text-gray-600">
-            Type the session code shown on the screen to join.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <input
-              type="text"
-              placeholder="1234 5678"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              className="border border-gray-300 rounded-xl px-4 py-3 w-full sm:w-64 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleJoin}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md transition w-full sm:w-auto"
-            >
-              Join
-            </motion.button>
-          </div>
-        </div>
-      </motion.main>
-    </div>
+        <input
+          type="text"
+          value={quizCode}
+          onChange={handleChange}
+          placeholder="6-digit code"
+          className={`w-full px-4 py-3 rounded-lg border-2 text-center text-xl font-mono tracking-widest ${
+            error ? "border-red-600" : "border-blue-800 dark:border-gray-200"
+          } focus:outline-none focus:ring-2 ${
+            error ? "focus:ring-red-400" : "focus:ring-blue-900  dark:focus:ring-gray-500"
+          }`}
+          maxLength={6}
+          autoFocus
+          spellCheck="false"
+          inputMode="numeric"
+          pattern="[0-9]*"
+        />
+        {error && <p className="text-red-600 mt-2 text-sm">{error}</p>}
+        <motion.button
+          type="submit"
+          disabled={quizCode.length !== 6}
+          whileHover={quizCode.length === 6 ? { scale: 1.05 } : {}}
+          whileTap={quizCode.length === 6 ? { scale: 0.95 } : {}}
+          className={`mt-6 font-semibold px-6 py-3 rounded-lg shadow-md transition ${
+            quizCode.length === 6
+              ? "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+              : "bg-blue-300 text-blue-100 cursor-not-allowed"
+          }`}
+        >
+          Start Quiz
+        </motion.button>
+      </form>
+    </motion.div>
   );
 }

@@ -1,22 +1,27 @@
-import React from "react";
+import React  from "react";
 import { Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import Logout from "./components/logout";
+import Logout from "./components/Logout";
 import Quiz from "./pages/Quiz";
-import VerifyEmail from "./components/verifyemail";
-import Verification from "./pages/Verification";
+import Verification from "./pages//Verification";
 import About from "./pages/About";
-import Result from "./pages/Result";
+import Result from "./pages/Results";
+import NotFound from "./pages/NotFound";
+import Loader from './components/Loader';
+import VerifyEmail from "./components/VerifyEmail";
 
-import UserDashboard from './routes/userDashboard';
 
-import PublicLayout from "./layouts/PublicLayout";
-import HostLayout from "./layouts/HostLayout";
 
-import ProtectedRoute from "./components/protectedRoutes";
+import UserDashboard from './routes/UserDashboard';
+// import AdminDashboard from './routes/AdminDashboard';
+
+import MainLayout from "./layouts/MainLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 
 function App() {
@@ -25,25 +30,33 @@ function App() {
     <ToastContainer position="top-right" autoClose={3000} />
 
     <Routes>
-      <Route element={<PublicLayout />}>
+      <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/quiz" element={<Quiz />} />
-        <Route path="/result" element={<Result />} />
-        <Route path="/about" element={<About />} />
         <Route path="/signup" element={<Register />} />
+        <Route path="/quiz" element={<Quiz />} />
         <Route path="/signin" element={<Login />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/verify/:token" element={<VerifyEmail />} />
         <Route path="/verification" element={<Verification />} />
+        <Route path="/about" element={<About />} />   
+        <Route path="/load" element={<Loader />} />       
+        <Route path="/verify/:token" element={<VerifyEmail />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/result" element={<Result />} />
       </Route>
 
       {/* Host routes without Navbar/Footer */}
-      <Route element={<HostLayout />}>
+      { <Route element={<DashboardLayout />}>
         <Route 
           path="/user-dashboard/*" 
-          element={<ProtectedRoute allowedRoles={['user']}><UserDashboard /></ProtectedRoute>} 
+          element={<ProtectedRoute allowedRoles={['teacher']}><UserDashboard /></ProtectedRoute>} 
         />
-      </Route>
+
+        {/* <Route 
+          path="/user-dashboard/*" 
+          element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} 
+        /> */}
+      </Route> }
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
     </>
   );

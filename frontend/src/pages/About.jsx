@@ -18,13 +18,14 @@ export default function About() {
 
   return (
     <motion.div
-      className="max-w-3xl mx-auto my-12 px-4 text-gray-800 font-sans leading-relaxed py-20"
-      initial="hidden"
-      animate="visible"
-      variants={fadeIn}
+      className="max-w-4xl mx-auto px-6 py-12 text-gray-900 dark:text-gray-100"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -30 }}
+      transition={{ duration: 0.5 }}
     >
       <div className="flex justify-center mb-8">
-        <img src="/logo.png" alt="Menti Quiz App Logo" className="h-80 w-auto rounded-3xl shadow-md " />
+        <img src="src/assets/logo.png" alt="Menti Quiz App Logo" className="h-80 w-auto rounded-3xl shadow-md " />
       </div>
 
       <h1 className="text-4xl font-bold mb-6 text-center">About Menti Quiz App</h1>
@@ -77,19 +78,19 @@ export default function About() {
         <div className="flex flex-wrap gap-6">
           <button
             onClick={() => openExternal('https://sjaywebsolutions.lk')}
-            className="text-blue-600 hover:underline focus:outline-none"
+            className="text-blue-600 dark:text-cyan-500  focus:outline-none"
           >
             Personal Website
           </button>
           <button
             onClick={() => openExternal('https://github.com/seneth-jayashan')}
-            className="text-gray-800 hover:text-black focus:outline-none"
+            className="text-gray-800 dark:text-blue-300 dark:hover:text-blue-600 hover:text-black focus:outline-none"
           >
             GitHub
           </button>
           <button
             onClick={() => openExternal('https://linkedin.com/in/seneth-jayashan')}
-            className="text-blue-700 hover:underline focus:outline-none"
+            className="text-blue-700 dark:text-cyan-500  focus:outline-none"
           >
             LinkedIn
           </button>
