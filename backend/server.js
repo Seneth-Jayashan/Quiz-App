@@ -20,5 +20,3 @@ app.listen(PORT, () => {
 })
 
 connectDB();
-
-

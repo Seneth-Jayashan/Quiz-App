@@ -57,3 +57,18 @@ exports.sendVerificationEmail = async (email, token) => {
 
     return transporter.sendMail(mailOptions);
 };
+
+
+exports.sendPasswordResetEmail = async(email, resetUrl) => {
+
+    const mailOptions = {
+    from: `"Quiz App" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: "Verify your Quiz App account",
+    html:`<p>You requested a password reset. Click the link below to reset your password:</p>
+           <p><a href="${resetUrl}">${resetUrl}</a></p>
+           <p>If you did not request this, please ignore this email.</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};

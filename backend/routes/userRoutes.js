@@ -1,30 +1,28 @@
 const express = require('express');
 const router = express.Router();
-
-const {
-  createUser,
-  getAllUsers,
-  authentication,
-  login,
-  verifyEmail,
-  updateUser,
-  deleteUser,
-  sendVeriification,
-} = require( "../controllers/userControllers.js");
+const userController = require('../controllers/userController');
 const { authMiddleware, adminMiddleware } = require( "../middleware/authMiddleware.js");
-
 const upload = require("../middleware/uploadMiddleware");
 
-router.post("/register", upload.single("profilePicture"), createUser);
-router.post("/login", login);
+router.post('/signup', upload.single("profilePicture"), userController.createUser);
+router.post('/signin', userController.login);
 
-router.post('/sendverifylink', sendVeriification);
+router.get('/me' , authMiddleware,  userController.authentication);
 
-router.get("/verify/:token", verifyEmail);
+router.get("/verify/:token", userController.verifyEmail);
+router.post('/sendverifylink', userController.sendVerification);
 
-router.get("/me", authMiddleware, authentication);
-router.get("/", authMiddleware, adminMiddleware, getAllUsers);
-router.put("/", authMiddleware, upload.single("profilePicture"), updateUser);
-router.delete("/", authMiddleware, deleteUser);
+
+router.get('/allusers', authMiddleware, adminMiddleware, userController.getAllUsers);
+router.get('/user/:id', authMiddleware, adminMiddleware, userController.getUserById);
+
+router.put('/users/:id',authMiddleware, upload.single("profilePicture"), userController.updateUser);
+router.delete('/users/:id',authMiddleware, userController.deleteUser);
+
+router.put('/users/:id/subscription', authMiddleware, userController.activateSubscription);
+router.get('/users/:id/subscription', authMiddleware, userController.getSubscriptionStatus);
+
+router.post('/requestmail', userController.requestPasswordReset);
+router.post('/reset', userController.resetPassword);
 
 module.exports = router;

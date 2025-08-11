@@ -16,28 +16,29 @@ const VerifyEmail = () => {
         const data = res.data;
 
         setMessage(data?.message || "Email verified successfully!");
-        Swal.fire({
+        setLoading(false);
+
+        await Swal.fire({
           title: "Success!",
-          text: data?.message,
+          text: data?.message || "Your email has been verified successfully.",
           icon: "success",
           confirmButtonColor: "#2563eb",
         });
 
-        // Redirect after short delay
-        setTimeout(() => navigate("/signin"), 1500);
+        navigate("/signin");
       } catch (error) {
         console.error("Verification error:", error);
         setMessage("Invalid or expired token");
-        Swal.fire({
+        setLoading(false);
+
+        await Swal.fire({
           title: "Error!",
-          text: "Invalid or expired token. Re send Verification link or Please contact support.",
+          text: "Invalid or expired token. Please request a new verification link or contact support.",
           icon: "error",
           confirmButtonColor: "#dc2626",
         });
 
-        setTimeout(() => navigate("/verification"), 2000);
-      } finally {
-        setLoading(false);
+        navigate("/verification");
       }
     };
 
@@ -45,9 +46,9 @@ const VerifyEmail = () => {
   }, [token, navigate]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-1 flex items-center justify-center bg-gray-50">
-        <div className="bg-white shadow-lg rounded-xl p-8 max-w-md w-full text-center">
+    <div className="flex flex-col">
+      <div className="flex-1 flex items-center justify-center">
+        <div className=" shadow-lg rounded-xl p-8 max-w-md w-full text-center">
           {loading ? (
             <>
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mx-auto mb-6"></div>
