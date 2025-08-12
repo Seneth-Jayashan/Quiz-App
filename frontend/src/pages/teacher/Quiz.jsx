@@ -271,7 +271,7 @@ export default function Quiz() {
                     onClick={() => toggleExpandQuiz(quiz._id)}
                     className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 hover:bg-indigo-50 dark:hover:bg-indigo-900 transition cursor-pointer gap-3 select-none"
                   >
-                    <div className="flex flex-col sm:flex-row flex-1 gap-4 sm:gap-12">
+                    <div className="flex flex-col sm:flex-row flex-1 gap-4 sm:gap-12 md:max-w-14">
                       <div
                         className="min-w-[180px] font-semibold text-indigo-700 dark:text-indigo-400 truncate"
                         title={quiz.title}
@@ -286,9 +286,6 @@ export default function Quiz() {
                       </div>
                       <div className="text-gray-600 dark:text-gray-400 text-sm">
                         Questions: <span className="font-medium">{quiz.questions.length}</span>
-                      </div>
-                      <div className="text-gray-600 dark:text-gray-400 text-sm">
-                        Time Limit: <span className="font-medium">{quiz.timeLimit || "-"}</span> mins
                       </div>
                     </div>
 
