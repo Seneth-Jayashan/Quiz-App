@@ -531,7 +531,7 @@ export default function Quiz() {
             {/* Hidden QR Code canvas to copy image from */}
             <QRCodeCanvas
               id="hidden-qr-canvas"
-              value={`${import.meta.env.VITE_FRONTEND_URL}/quiz/${qrSessionCode}`}
+              value={`${import.meta.env.VITE_FRONTEND_URL}/quiz?code=${qrSessionCode}`}
               size={200}
               includeMargin={true}
               style={{ display: "none" }}
