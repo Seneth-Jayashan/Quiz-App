@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import Logo from '../assets/logo.png';
+import Logo from "../assets/logo.png";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const [token, setToken] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hasStdId, setHasStdId] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       if (localStorage.getItem("darkMode")) {
@@ -19,7 +20,9 @@ export default function Navbar() {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
+    const storedStdId = localStorage.getItem("stdId");
     setToken(storedToken);
+    setHasStdId(!!storedStdId);
   }, []);
 
   useEffect(() => {
@@ -32,19 +35,16 @@ export default function Navbar() {
   }, [darkMode]);
 
   const handleLogout = () => {
-    navigate('/logout');
+    navigate("/logout");
   };
 
-  // Animation variants for mobile menu
   const menuVariants = {
     hidden: { height: 0, opacity: 0, transition: { duration: 0.3 } },
     visible: { height: "auto", opacity: 1, transition: { duration: 0.3 } },
   };
 
-  // Animation variants for links hover
-  const linkHover = { scale: 1.1, color: "#6366F1" /* blue-500 */ };
+  const linkHover = { scale: 1.1, color: "#6366F1" };
 
-  // Animation variants for navbar container
   const navbarVariants = {
     hidden: { y: -50, opacity: 0 },
     visible: {
@@ -59,7 +59,7 @@ export default function Navbar() {
     },
   };
 
-  const toggleDarkMode = () => setDarkMode(prev => !prev);
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   return (
     <motion.nav
@@ -83,6 +83,27 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-6 items-center">
+            {token && (
+              <motion.div whileHover={linkHover}>
+                <NavLink
+                  to="/user-dashboard"
+                  className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-blue-400 font-semibold px-4 py-2 rounded-md border border-blue-600 dark:border-blue-400 transition-colors duration-300"
+                >
+                  Dashboard
+                </NavLink>
+              </motion.div>
+            )}
+
+            {hasStdId && (
+              <motion.div whileHover={linkHover}>
+                <NavLink
+                  to="/result"
+                  className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-blue-400 font-semibold px-4 py-2 rounded-md border border-green-600 dark:border-green-400 transition-colors duration-300"
+                >
+                  My Results
+                </NavLink>
+              </motion.div>
+            )}
 
             {!token ? (
               <>
@@ -121,7 +142,7 @@ export default function Navbar() {
               </motion.button>
             )}
 
-            {/* Dark mode toggle button */}
+            {/* Dark mode toggle */}
             <button
               onClick={toggleDarkMode}
               aria-label="Toggle Dark Mode"
@@ -129,7 +150,6 @@ export default function Navbar() {
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
               {darkMode ? (
-                // Sun icon (light mode)
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -138,10 +158,13 @@ export default function Navbar() {
                   stroke="currentColor"
                   strokeWidth={2}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m8.485-9h1M3 12h1m15.364 6.364l.707.707M5.636 5.636l.707.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707M12 7a5 5 0 100 10 5 5 0 000-10z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 3v1m0 16v1m8.485-9h1M3 12h1m15.364 6.364l.707.707M5.636 5.636l.707.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707M12 7a5 5 0 100 10 5 5 0 000-10z"
+                  />
                 </svg>
               ) : (
-                // Moon icon (dark mode)
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -157,15 +180,13 @@ export default function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <div className="md:hidden flex items-center space-x-2">
-            {/* Dark mode toggle in mobile menu */}
+            {/* Dark mode toggle */}
             <button
               onClick={toggleDarkMode}
               aria-label="Toggle Dark Mode"
               className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
               {darkMode ? (
-                // Sun icon
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -174,10 +195,13 @@ export default function Navbar() {
                   stroke="currentColor"
                   strokeWidth={2}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m8.485-9h1M3 12h1m15.364 6.364l.707.707M5.636 5.636l.707.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707M12 7a5 5 0 100 10 5 5 0 000-10z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 3v1m0 16v1m8.485-9h1M3 12h1m15.364 6.364l.707.707M5.636 5.636l.707.707m12.02 12.02l-.707.707M6.343 17.657l-.707.707M12 7a5 5 0 100 10 5 5 0 000-10z"
+                  />
                 </svg>
               ) : (
-                // Moon icon
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -190,11 +214,10 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* Hamburger menu toggle */}
+            {/* Hamburger */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-md"
-              aria-label="Toggle menu"
             >
               <svg
                 className="w-8 h-8"
@@ -216,30 +239,48 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu with AnimatePresence */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            id="mobileMenu"
             initial="hidden"
             animate="visible"
             exit="hidden"
             variants={menuVariants}
-            className="md:hidden bg-white dark:bg-gray-900 shadow-inner border-t border-gray-200 dark:border-gray-700 overflow-hidden transition-colors duration-300"
+            className="md:hidden bg-white dark:bg-gray-900 shadow-inner border-t border-gray-200 dark:border-gray-700 overflow-hidden"
           >
+            {token && (
+              <NavLink
+                to="/user-dashboard"
+                className="block px-6 py-3 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                Dashboard
+              </NavLink>
+            )}
+
+            {hasStdId && (
+              <NavLink
+                to="/result"
+                className="block px-6 py-3 text-green-600 dark:text-green-400 font-semibold hover:bg-green-50 dark:hover:bg-green-900"
+                onClick={() => setMenuOpen(false)}
+              >
+                My Results
+              </NavLink>
+            )}
 
             {!token ? (
               <>
                 <NavLink
                   to="/signup"
-                  className="block px-6 py-3 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-300"
+                  className="block px-6 py-3 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-900"
                   onClick={() => setMenuOpen(false)}
                 >
                   Signup
                 </NavLink>
                 <NavLink
                   to="/signin"
-                  className="block px-6 py-3 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors duration-300"
+                  className="block px-6 py-3 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-900"
                   onClick={() => setMenuOpen(false)}
                 >
                   Signin
@@ -247,10 +288,8 @@ export default function Navbar() {
               </>
             ) : (
               <button
-                onClick={() => {
-                  handleLogout();
-                }}
-                className="w-full text-left px-6 py-3 bg-blue-600 hover:bg-blue-700 transition-colors duration-300 text-white font-semibold"
+                onClick={handleLogout}
+                className="w-full text-left px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
               >
                 Logout
               </button>
