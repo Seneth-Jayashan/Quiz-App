@@ -1,20 +1,23 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 const Logout = () => {
-  const navigate = useNavigate();
-
   useEffect(() => {
+    // Clear stored user data
     localStorage.removeItem("token");
     localStorage.removeItem("data");
-      Swal.fire({
-        title: "Success!!",
-        text: "Logout from your account",
-        icon: "success",
-      });
-    navigate("/signin");
-  }, [navigate]);
+
+    Swal.fire({
+      title: "Success!!",
+      text: "Logout from your account",
+      icon: "success",
+      timer: 1500,
+      showConfirmButton: false,
+    }).then(() => {
+      // Force full site reload to signin page
+      window.location.href = "/signin";
+    });
+  }, []);
 
   return (
     <div className="logout-container">
